@@ -104,7 +104,6 @@ export class UserListeComponent implements OnInit {
   onEdit(utilisateur: Utilisateur) {
     this.isEditMode = true; // Activer le mode édition
     this.utilisateur = utilisateur; // Stocker l'utilisateur à éditer
-    
     // Retirez les validateurs de mot de passe en mode édition
     // this.removePasswordValidators();
   
@@ -127,12 +126,13 @@ export class UserListeComponent implements OnInit {
   
   onUpdate() {
     if (this.userForm.valid && this.utilisateur) {
-      // Filtrer les champs non remplis
+      // Filtrer les champs non 
+      
       const { confirm_password, password, ...userData } = this.userForm.value;
       if (password) {
         userData['password'] = password;
       }
-      
+    //  delete userData.password      
       this.utilisateurService.updateUtilisateur(this.utilisateur.id, userData).subscribe({
         next: () => {
           this.closeModal();

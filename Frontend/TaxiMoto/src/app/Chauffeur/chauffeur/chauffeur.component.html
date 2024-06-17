@@ -1,4 +1,7 @@
-<h1 class="text-green-600 p-4 text-2xl font-bold text-center">Verifier les recettes de votre contrat a crédit en cours</h1>
+<!-- ********************* Les recettes **************** -->
+<h1 *ngIf="paginatedRecetteChauffeur.length == 0"class="text-green-600 p-4 text-2xl font-bold text-center">Auccune recette enregistrée d'abord</h1>
+<div *ngIf="paginatedRecetteChauffeur.length > 0">
+  <h1 class="text-green-600 p-4 text-2xl font-bold text-center">Verifier les recettes de votre contrat a crédit en cours</h1>
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-[80%] mx-auto gap-4">
     <div *ngFor="let recette of paginatedRecetteChauffeur; let i = index">
         <div  *ngIf="recette.chauffeur.contrat.etat == 'en_cours'"  class="p-6 rounded-lg shadow-lg bg-white border border-gray-200">
@@ -47,12 +50,14 @@
   </div>
   
 
+</div>
 
   <!-- ************************** Panes -->
-
-<h1 *ngIf="pannesChauffeur.length > 0" class="text-green-600 p-4 text-2xl font-bold text-center">Pannes de la moto pour le contrat d'embauche en cours</h1>
-
+<h1 *ngIf="pannesChauffeur.length == 0"class="text-green-600 p-4 text-2xl font-bold text-center">Auccune panne enregistrée d'abord</h1>
 <div *ngIf="pannesChauffeur.length>0">
+  <h1 class="text-green-600 p-4 text-2xl font-bold text-center">Les pannes de la moto pour le contrat d'embauche en cours</h1>
+
+<div>
   <div  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-[80%] mx-auto gap-4">
     <div *ngFor="let panne of paginatedPannesChauffeur; let i = index">
         <div class="p-6 rounded-lg shadow-lg bg-white border border-gray-200">
@@ -92,10 +97,13 @@
 
 </div>
 
+</div>
 
 <!-- ********************* Entretien ********************** -->
-<h1 *ngIf="entretiensChauffeur.length > 0" class="text-green-600 p-4 text-2xl font-bold text-center">Les entretiens de la moto pour le contrat d'embauche en cours</h1>
+<h1 *ngIf="entretiensChauffeur.length == 0"class="text-green-600 p-4 text-2xl font-bold text-center">Auccun entretien enregistré d'abord</h1>
 <div *ngIf="entretiensChauffeur.length > 0">
+  <h1 class="text-green-600 p-4 text-2xl font-bold text-center">Les entretiens de la moto pour le contrat d'embauche en cours</h1>
+<div>
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-[80%] mx-auto gap-4">
     <div *ngFor="let entretien of paginatedEntretiensChauffeur; let i = index">
       <div class="p-6 rounded-lg shadow-lg bg-white border border-gray-200">
@@ -132,4 +140,5 @@
     <button class="mx-2 px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300" (click)="previousPageEntretien()" [disabled]="currentPageEntretien <= 1">Previous</button>
     <button class="mx-2 px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300" (click)="nextPageEntretien()" [disabled]="currentPageEntretien >= totalPagesEntretien">Next</button>
   </div>
+</div>
 </div>

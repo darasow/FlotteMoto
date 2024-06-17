@@ -13,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
             'type_utilisateur', 'telephone', 'adresse', 'date_embauche', 
             'enContrat', 'password'
         ]
-        extra_kwargs = {'password': {'write_only': True}}
+        extra_kwargs = {'password': {'write_only': True, 'required': False}}
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
