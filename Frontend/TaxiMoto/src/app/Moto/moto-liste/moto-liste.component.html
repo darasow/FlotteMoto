@@ -55,15 +55,15 @@
   </div>
   
   <!-- Modal -->
-  <div class="modal fixed z-50 inset-0 overflow-y-auto" *ngIf="showModal">
+  <div class="modal fixed w-[50%] mx-auto top-20  z-50 inset-0 overflow-y-auto" *ngIf="showModal">
     <div class=" bg-gray-900 opacity-50"></div>
     <div class="modal-content bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
       <div class="modal-header flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold">Add Moto</h2>
-        <button (click)="closeModal()" class="text-gray-500 hover:text-gray-800">&times;</button>
+        <h2 class="text-xl font-bold">Add</h2>
+        <button (click)="closeModal()" class=" text-white rounded-xl py-[10px] px-[20px] bg-[#007bff]">&times;</button>
       </div>
       <!-- Moto Form -->
-      <form [formGroup]="motoForm" class="space-y-6 gap-5 grid grid-cols-1 md:grid-cols-2">
+      <form [formGroup]="motoForm" class="space-y-6 gap-2 grid grid-cols-1">
         <div>
           <label for="numero_serie" class="block text-sm font-medium text-gray-700">Serial Number</label>
           <input
