@@ -138,6 +138,7 @@ export class UserListeComponent implements OnInit {
           this.closeModal();
           this.getUtilisateurs();
           this.router.navigate(['/utilisateurs']);
+          this.isEditMode = false
         },
         error: (err) => {
           console.error('Error updating user:', err);
