@@ -1,0 +1,119 @@
+<!-- role.component.html -->
+<div class="flex items-center justify-center p-4">
+    <div class="container overflow-auto">
+      <button (click)="openModal()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Add Role
+      </button>
+      <table class="w-full sm:bg-white rounded-lg overflow-hidden sm:shadow-lg my-5">
+        <thead class="text-white bg-teal-400">
+          <tr>
+            <th class="p-3 text-left">ID</th>
+            <th class="p-3 text-left">Name</th>
+            <th class="p-3 text-left">Authorization Level</th>
+            <th class="p-3 text-left">Status</th>
+            <th class="p-3 text-left" width="110px">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let role of roles" class="hover:bg-gray-100">
+            <td class="border-grey-light border p-3">{{ role.id }}</td>
+            <td class="border-grey-light border p-3">{{ role.name }}</td>
+            <td class="border-grey-light border p-3">{{ role.authorization_level }}</td>
+            <td class="border-grey-light border p-3">{{ role.status }}</td>
+            <td class="border-grey-light border p-3 flex items-center space-x-2">
+              <button class="text-blue-600 hover:text-blue-900" (click)="editRole(role)">Edit</button>
+              <button class="text-red-600 hover:text-red-900" (click)="deleteRole(role.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+  
+      <!-- Pagination Controls -->
+      <div class="flex justify-center items-center mt-4">
+        <button
+          class="mx-1 px-2 py-1 text-gray-700 bg-gray-300 rounded disabled:opacity-50"
+          [disabled]="currentPage === 1"
+          (click)="previousPage()"
+        >
+          Previous
+        </button>
+        <span class="mx-2">{{ currentPage }} / {{ totalPages }}</span>
+        <button
+          class="mx-1 px-2 py-1 text-gray-700 bg-gray-300 rounded disabled:opacity-50"
+          [disabled]="currentPage === totalPages"
+          (click)="nextPage()"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal -->
+  <div class="modal fixed z-50 inset-0 overflow-y-auto" *ngIf="showModal">
+    <div class="bg-gray-900 opacity-50"></div>
+    <div class="modal-content bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <div class="modal-header flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold">{{ isEditMode ? 'Update' : 'Add' }} Role</h2>
+        <button (click)="closeModal()" class="text-gray-500 hover:text-gray-800">&times;</button>
+      </div>
+      <!-- Formulaire de rôle -->
+      <form [formGroup]="roleForm" class="space-y-6" (ngSubmit)="onSubmit()">
+        <div>
+          <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['name'].invalid && formControls['name'].touched}">
+          <div class="text-red-600 mt-1" *ngIf="formControls['name'].invalid && formControls['name'].touched">
+            Name is required.
+          </div>
+        </div>
+        <div>
+          <label for="authorization_level" class="block text-sm font-medium text-gray-700">Authorization Level</label>
+          <input
+            id="authorization_level"
+            type="number"
+            formControlName="authorization_level"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['authorization_level'].invalid && formControls['authorization_level'].touched}">
+          <div class="text-red-600 mt-1" *ngIf="formControls['authorization_level'].invalid && formControls['authorization_level'].touched">
+            Authorization Level is required and must be a valid number.
+          </div>
+        </div>
+        <div>
+          <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+          <select
+            id="status"
+            formControlName="status"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['status'].invalid && formControls['status'].touched}">
+            <option value="1">Active</option>
+            <option value="0">Inactive</option>
+          </select>
+          <div class="text-red-600 mt-1" *ngIf="formControls['status'].invalid && formControls['status'].touched">
+            Status is required.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+            (click)="closeModal()"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            [disabled]="roleForm.invalid"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            {{ isEditMode ? 'Update' : 'Add' }} Role
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  

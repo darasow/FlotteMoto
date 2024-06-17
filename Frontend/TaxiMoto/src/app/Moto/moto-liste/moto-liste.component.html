@@ -1,0 +1,138 @@
+<!-- Liste -->
+<div class="flex items-center justify-center p-4">
+    <div class="container overflow-auto">
+      <div class="flex justify-between">
+        <h1 class="bg-teal-400 hover:bg-teal-500 py-2 px-4 rounded text-white font-bold">Liste des motos</h1>
+        <button (click)="openModal()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Add
+        </button>
+       </div>
+      <table *ngIf="paginateMotos.length > 0;" class="w-full sm:bg-white rounded-lg overflow-hidden sm:shadow-lg my-5">
+        <thead class="text-white bg-teal-400">
+          <tr>
+            <th class="p-3 text-left">ID</th>
+            <th class="p-3 text-left">Serial Number</th>
+            <th class="p-3 text-left">Color</th>
+            <th class="p-3 text-left">En contrat</th>
+            <th class="p-3 text-left">Date d'achat</th>
+            <th class="p-3 text-left">Created By</th>
+            <th class="p-3 text-left">Created At</th>
+            <th class="p-3 text-left">Modified At</th>
+            <th class="p-3 text-left">Modified By</th>
+            <th class="p-3 text-left" width="110px">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let moto of paginateMotos" class="hover:bg-gray-100">
+            <td class="border-grey-light border p-3">{{ moto.id }}</td>
+            <td class="border-grey-light border p-3">{{ moto.numero_serie }}</td>
+            <td class="border-grey-light border p-3">{{ moto.couleur }}</td>
+            <td class="border-grey-light border p-3">
+              {{ moto.enContrat ? 'Oui' : 'Non' }}
+              
+          </td>
+            <td class="border-grey-light border p-3">{{ moto.date_achat | date }}</td>
+            <td class="border-grey-light border p-3">{{ moto.created_by }}</td>
+            <td class="border-grey-light border p-3">{{ moto.created_at | date }}</td>
+            <td class="border-grey-light border p-3">{{ moto.modified_at | date }}</td>
+            <td class="border-grey-light border p-3">{{ moto.modified_by }}</td>
+            <td class="border-grey-light border p-3 flex items-center space-x-2">
+              <button  class="text-blue-600 hover:text-blue-900" (click)="editMoto(moto)">Edit</button>
+              <button  class="text-red-600 hover:text-red-900" (click)="deleteMoto(moto.id!)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+  
+        <!-- Pagination Controls -->
+    <div class="flex justify-evenly mt-4">
+      <button (click)="previousPage()" [disabled]="currentPage <= 1" class="px-4 py-2 bg-blue-500 text-white rounded">Précédent</button>
+      <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage >= totalPages" class="px-4 py-2 bg-blue-500 text-white rounded">Suivant</button>
+    </div>
+  
+    </div>
+  </div>
+  
+  <!-- Modal -->
+  <div class="modal fixed z-50 inset-0 overflow-y-auto" *ngIf="showModal">
+    <div class=" bg-gray-900 opacity-50"></div>
+    <div class="modal-content bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <div class="modal-header flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold">Add Moto</h2>
+        <button (click)="closeModal()" class="text-gray-500 hover:text-gray-800">&times;</button>
+      </div>
+      <!-- Moto Form -->
+      <form [formGroup]="motoForm" class="space-y-6 gap-5 grid grid-cols-1 md:grid-cols-2">
+        <div>
+          <label for="numero_serie" class="block text-sm font-medium text-gray-700">Serial Number</label>
+          <input
+            id="numero_serie"
+            type="text"
+            formControlName="numero_serie"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+          />
+        </div>
+        <div>
+          <label for="couleur" class="block text-sm font-medium text-gray-700">Color</label>
+          <input
+            id="couleur"
+            type="text"
+            formControlName="couleur"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+          />
+        </div>
+        <div>
+          <label for="date_achat" class="block text-sm font-medium text-gray-700">Purchase Date</label>
+          <input
+            id="date_achat"
+            type="date"
+            formControlName="date_achat"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+          />
+        </div>
+        <!-- Add more fields here as needed -->
+      </form>
+      <!-- Submit Button -->
+   
+      <button
+        *ngIf="!isEditMode"
+        (click)="createMoto()"
+        class="w-full z-10 py-2 px-4 bg-teal-500 text-white rounded-md shadow-md hover:bg-teal-700 transition duration-150"
+        [disabled]="motoForm.invalid"
+      >
+        Create Moto
+      </button>
+      
+      <button
+        *ngIf="isEditMode"
+        class="w-full z-10 py-2 px-4 bg-teal-500 text-white rounded-md shadow-md hover:bg-teal-700 transition duration-150"
+        [disabled]="motoForm.invalid"
+        (click)="updateMoto()"
+      >
+        Update Moto
+      </button>
+      
+    </div>
+  </div>
+  
+
+  <!-- Spiner -->
+  <ng-template #noDatableEvalable>
+    <div class="fixed inset-0 flex items-center justify-center bg-white bg-opacity-80 z-50">
+      <div aria-label="Loading..." role="status" class="flex flex-col items-center space-y-4">
+        <svg class="h-20 w-20 animate-spin stroke-gray-600" viewBox="0 0 256 256">
+          <line x1="128" y1="32" x2="128" y2="64" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+          <line x1="195.9" y1="60.1" x2="173.3" y2="82.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+          <line x1="224" y1="128" x2="192" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+          <line x1="195.9" y1="195.9" x2="173.3" y2="173.3" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+          <line x1="128" y1="224" x2="128" y2="192" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+          <line x1="60.1" y1="195.9" x2="82.7" y2="173.3" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+          <line x1="32" y1="128" x2="64" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+          <line x1="60.1" y1="60.1" x2="82.7" y2="82.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+        </svg>
+        <span class="text-xl font-medium text-gray-600">Loading...</span>
+      </div>
+    </div>
+  </ng-template>
+  

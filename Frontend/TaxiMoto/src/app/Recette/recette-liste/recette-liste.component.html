@@ -1,0 +1,198 @@
+<!-- Liste Rectees -->
+<div class="flex items-center justify-center p-4">
+    <div class="container overflow-auto">
+      <div class="flex justify-between">
+        <h1 class="bg-teal-400 hover:bg-teal-500 py-2 px-4 rounded text-white font-bold">Liste des recettes</h1>
+        <button (click)="openModal()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Add
+        </button>
+       </div>
+      <table class="w-full z-20 sm:bg-white rounded-lg overflow-hidden sm:shadow-lg my-5">
+        <thead class="text-white bg-teal-400">
+          <tr>
+            <th class="p-3 text-left">ID</th>
+            <th class="p-3 text-left">Chauffeur</th>
+            <th class="p-3 text-left">Moto</th>
+            <th class="p-3 text-left">Type contrat</th>
+            <th class="p-3 text-left">Date</th>
+            <th class="p-3 text-left">Montant</th>
+            <th class="p-3 text-left" width="110px">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let recette of paginatedRecette" class=" hover:bg-gray-100">
+            <td class="border-grey-light border p-3">{{ recette.id }}</td>
+            <td class="border-grey-light border p-3">{{ recette.chauffeur.last_name }}-{{recette.chauffeur.first_name}}</td>
+            <td class="border-grey-light border p-3">{{ recette.chauffeur.contrat.moto.numero_serie }}</td>
+            <td class="border-grey-light border p-3">{{ recette.chauffeur.contrat.type_contrat }}</td>
+            <td class="border-grey-light border p-3">{{ recette.date | date }}</td>
+            <td class="border-grey-light border p-3">{{ recette.montant | number:'1.2-2' }}</td>
+            <td class="">
+              <div class="inline-block group">
+                 <!-- Bouton "Action" avec modal -->
+            <button (click)="openModalAction(recette)" class="px-4 py-2 bg-teal-400 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 flex items-center space-x-1">
+              <span>Action</span>
+              <svg width="12px" height="12px" class="h-2 w-2 fill-current opacity-60" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048">
+                <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
+              </svg>
+            </button>
+              
+              </div>
+              
+              
+            </td>
+          </tr>
+        </tbody>
+      </table>
+        <!-- Pagination Controls -->
+    <div class="flex justify-evenly mt-4">
+      <button (click)="previousPage()" [disabled]="currentPage <= 1" class="px-4 py-2 bg-blue-500 text-white rounded">Précédent</button>
+      <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage >= totalPages" class="px-4 py-2 bg-blue-500 text-white rounded">Suivant</button>
+    </div>
+  
+
+      
+    </div>
+  </div>
+
+<!-- Modal pour les Détails de la Recette -->
+<div class="fixed z-10 inset-0 overflow-y-auto" *ngIf="modalActionOpen" role="dialog" aria-modal="true">
+  <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+      role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+      <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+        <div class="sm:flex sm:items-start">
+          <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-headline">Détails de la Recette</h3>
+            <div class="mt-2">
+              <!-- Affichage des détails de la recette -->
+              <dl class="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-3">
+                <div class="sm:col-span-1">
+                  <dt class="text-sm font-medium text-gray-500">Chauffeur</dt>
+                  <dd class="mt-1 text-sm text-gray-900">{{ actionRecette?.chauffeur.last_name }} {{ actionRecette?.chauffeur.first_name }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                  <dt class="text-sm font-medium text-gray-500">Date de payement : </dt>
+                  <dd class="mt-1 text-sm text-gray-900">{{ actionRecette?.date | date }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                  <dt class="text-sm font-medium text-gray-500">Montant Payer : </dt>
+                  <dd class="mt-1 text-sm text-gray-900">{{ actionRecette?.montant | number:'1.2-2' }}</dd>
+                </div>
+                <div class="sm:col-span-1" *ngIf="actionRecette.chauffeur.contrat.type_contrat == 'credit'">
+                  <dt class="text-sm font-medium text-gray-500">Montant total restant</dt>
+                  <dd class="mt-1 text-sm text-gray-900">{{ actionRecette?.chauffeur.contrat.montant_initial -  actionRecette?.chauffeur.total_recettes | number:'1.2-2' }}</dd>
+                </div>
+                <div class="sm:col-span-1" *ngIf="actionRecette.chauffeur.contrat.type_contrat == 'credit'">
+                  <dt class="text-sm font-medium text-gray-500">Montant total payer</dt>
+                  <dd class="mt-1 text-sm text-gray-900">{{ actionRecette?.chauffeur.total_recettes | number:'1.2-2' }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                  <dt class="text-sm font-medium text-gray-500">Moto</dt>
+                  <dd class="mt-1 text-sm text-gray-900">{{ actionRecette?.chauffeur.contrat.moto.numero_serie }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                  <dt class="text-sm font-medium text-gray-500">Type de Contrat</dt>
+                  <dd class="mt-1 text-sm text-gray-900">{{ actionRecette?.chauffeur.contrat.type_contrat }}</dd>
+                </div>
+              </dl>
+              <h1>Action</h1>
+              <button class="text-red-600 font-bold w-full block px-4 py-2 text-sm hover:bg-gray-100 rounded transition duration-150 ease-in-out" (click)="deleteRecette(actionRecette.id!)">Delete</button>
+              <button class="text-blue-600 font-bold  block w-full px-4 py-2 text-sm hover:bg-gray-100 rounded transition duration-150 ease-in-out" (click)="openModal(actionRecette)">Edit</button>
+            
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+        <button type="button" (click)="closeModalAction()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-200 text-base font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:ml-3 sm:w-auto sm:text-sm">
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Modal Formulaire -->
+  <div class="fixed z-10 inset-0 overflow-y-auto" *ngIf="modalOpen" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+      <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+              <h3 class="text-lg leading-6 font-medium text-gray-900">
+                {{ currentRecette ? 'Edit' : 'Add' }} Recette
+              </h3>
+              <div class="mt-2">
+                <form [formGroup]="recetteForm" (ngSubmit)="onSubmit()">
+                  <div>
+                    <label for="chauffeur" class="block text-sm font-medium text-gray-700">Chauffeur</label>
+                    <select
+                      id="chauffeur"
+                      formControlName="chauffeur"
+                      class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+                      [ngClass]="{ 'border-red-500': formControls['chauffeur'].invalid && formControls['chauffeur'].touched }">
+                      <option value="">Select Chauffeur</option>
+                      <option *ngFor="let chauffeur of chauffeursEnContrat"  [value]="chauffeur.chauffeur.id">
+                        {{ chauffeur.chauffeur.first_name }} {{ chauffeur.chauffeur.last_name }} (Moto: {{ chauffeur.moto.numero_serie }})
+                      </option>
+                    </select>
+                    <div class="text-red-600 mt-1" *ngIf="formControls['chauffeur'].invalid && formControls['chauffeur'].touched">
+                      Chauffeur is required.
+                    </div>
+                  </div>
+  
+                  <div>
+                    <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
+                    <input
+                      id="date"
+                      type="date"
+                      formControlName="date"
+                      class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+                      [ngClass]="{ 'border-red-500': formControls['date'].invalid && formControls['date'].touched }">
+                    <div class="text-red-600 mt-1" *ngIf="formControls['date'].invalid && formControls['date'].touched">
+                      Date is required.
+                    </div>
+                  </div>
+  
+                  <div>
+                    <label for="montant" class="block text-sm font-medium text-gray-700">Montant</label>
+                    <input
+                      id="montant"
+                      type="number"
+                      formControlName="montant"
+                      class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+                      [ngClass]="{ 'border-red-500': formControls['montant'].invalid && formControls['montant'].touched }">
+                    <div class="text-red-600 mt-1" *ngIf="formControls['montant'].invalid && formControls['montant'].touched">
+                      <div *ngIf="formControls['montant'].errors?.['required']">Le montant est requis.</div>
+                      <div *ngIf="formControls['montant'].errors?.['pattern']">Le montant  doit être un nombre valide <br>(8 chiffres maximum et 2 chiffres apres la virgule).</div>
+                    
+                    </div>
+                  </div>
+  
+                  <div class="mt-4">
+                    <button type="submit" [disabled]="recetteForm.invalid"
+                      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                      {{ currentRecette ? 'Update' : 'Save' }}
+                    </button>
+                    <button type="button" (click)="closeModal()"
+                      class="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded">
+                      Fermer
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+

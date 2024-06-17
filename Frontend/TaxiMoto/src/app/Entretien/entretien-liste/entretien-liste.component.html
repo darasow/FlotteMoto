@@ -1,0 +1,152 @@
+<!-- entretien-liste.component.html -->
+
+<div class="flex items-center justify-center p-4">
+    <div class="container overflow-auto">
+      <div class="flex justify-between">
+        <h1 class="bg-teal-400 hover:bg-teal-500 py-2 px-4 rounded text-white font-bold">On gere les entretiens des motos en contrat d'embauche</h1>
+        <button (click)="openModal()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Add
+        </button>
+       </div>
+  
+      <table *ngIf="paginatedEntretiens.length > 0;" class="w-full sm:bg-white rounded-lg overflow-hidden sm:shadow-lg my-5">
+        <thead class="text-white bg-teal-400">
+          <tr>
+            <th class="p-3 text-left">ID</th>
+            <th class="p-3 text-left">Moto</th>
+            <th class="p-3 text-left">Type Entretien</th>
+            <th class="p-3 text-left">Date Entretien</th>
+            <th class="p-3 text-left">Description</th>
+            <th class="p-3 text-left" width="110px">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entretien of paginatedEntretiens" class="hover:bg-gray-100">
+            <td class="border-grey-light border p-3">{{ entretien.id }}</td>
+            <td class="border-grey-light border p-3">{{ entretien.moto.numero_serie }}</td>
+            <td class="border-grey-light border p-3">{{ entretien.type_entretien }}</td>
+            <td class="border-grey-light border p-3">{{ entretien.date_entretien | date }}</td>
+            <td class="border-grey-light border p-3">{{ entretien.description }}</td>
+            <td class="border-grey-light border p-3 flex items-center space-x-2">
+              <button class="text-blue-600 hover:text-blue-900" (click)="editEntretien(entretien)">Éditer</button>
+              <button class="text-red-600 hover:text-red-900" (click)="deleteEntretien(entretien.id!)">Supprimer</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+  
+         <!-- Pagination Controls -->
+         <div class="flex justify-evenly mt-4">
+          <button (click)="previousPage()" [disabled]="currentPage <= 1" class="px-4 py-2 bg-blue-500 text-white rounded">Précédent</button>
+          <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+          <button (click)="nextPage()" [disabled]="currentPage >= totalPages" class="px-4 py-2 bg-blue-500 text-white rounded">Suivant</button>
+        </div>
+
+    </div>
+  </div>
+
+<!-- Modal -->
+<div class="modal fixed z-50 inset-0 overflow-y-auto" *ngIf="showModal">
+    <div class="bg-gray-900 opacity-50"></div>
+    <div class="modal-content bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <div class="modal-header flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold">{{ isEditMode ? 'Modifier' : 'Ajouter' }} Entretien</h2>
+        <button (click)="closeModal()" class="text-gray-500 hover:text-gray-800">&times;</button>
+      </div>
+  
+      <!-- Formulaire d'entretien -->
+      <form [formGroup]="entretienForm" class="space-y-6" (ngSubmit)="onSubmit()">
+        <!-- Champ Moto -->
+        <div>
+          <label for="moto" class="block text-sm font-medium text-gray-700">Moto</label>
+          <select
+            id="moto"
+            formControlName="moto"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['moto'].invalid && formControls['moto'].touched}">
+            <option value="">Sélectionnez une Moto</option>
+            <option *ngFor="let moto of motos" [selected]="isEditMode && selectedEntretien?.moto?.id === moto?.id" [value]="moto.id">{{ moto.numero_serie }}</option>
+          </select>
+          <div class="text-red-600 mt-1" *ngIf="formControls['moto'].invalid && formControls['moto'].touched">
+            La moto est requise.
+          </div>
+        </div>
+  
+        <!-- Champ Type d'Entretien -->
+        <div>
+          <label for="type_entretien" class="block text-sm font-medium text-gray-700">Type d'Entretien</label>
+          <input
+            id="type_entretien"
+            formControlName="type_entretien"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['type_entretien'].invalid && formControls['type_entretien'].touched}">
+          <div class="text-red-600 mt-1" *ngIf="formControls['type_entretien'].invalid && formControls['type_entretien'].touched">
+            Le type d'entretien est requis.
+          </div>
+        </div>
+  
+        <!-- Champ Date d'Entretien -->
+        <div>
+          <label for="date_entretien" class="block text-sm font-medium text-gray-700">Date d'Entretien</label>
+          <input
+            id="date_entretien"
+            type="date"
+            formControlName="date_entretien"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['date_entretien'].invalid && formControls['date_entretien'].touched}">
+          <div class="text-red-600 mt-1" *ngIf="formControls['date_entretien'].invalid && formControls['date_entretien'].touched">
+            La date d'entretien est requise.
+          </div>
+        </div>
+  
+        <!-- Champ Description -->
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-700">Description (Optionnel)</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['description'].invalid && formControls['description'].touched}"></textarea>
+          <div class="text-red-600 mt-1" *ngIf="formControls['description'].invalid && formControls['description'].touched">
+            La description est requise.
+          </div>
+        </div>
+  
+        <!-- Pied de page modal avec boutons -->
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+            (click)="closeModal()">
+            Annuler
+          </button>
+          <button
+            type="submit"
+            [disabled]="entretienForm.invalid"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            {{ isEditMode ? 'Modifier' : 'Ajouter' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+    <!-- Spiner -->
+
+    <ng-template #noDatableEvalable>
+      <div class="fixed inset-0 flex items-center justify-center bg-white bg-opacity-80 z-50">
+        <div aria-label="Loading..." role="status" class="flex flex-col items-center space-y-4">
+          <svg class="h-20 w-20 animate-spin stroke-gray-600" viewBox="0 0 256 256">
+            <line x1="128" y1="32" x2="128" y2="64" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+            <line x1="195.9" y1="60.1" x2="173.3" y2="82.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+            <line x1="224" y1="128" x2="192" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+            <line x1="195.9" y1="195.9" x2="173.3" y2="173.3" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+            <line x1="128" y1="224" x2="128" y2="192" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+            <line x1="60.1" y1="195.9" x2="82.7" y2="173.3" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+            <line x1="32" y1="128" x2="64" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+            <line x1="60.1" y1="60.1" x2="82.7" y2="82.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+          </svg>
+          <span class="text-xl font-medium text-gray-600">Loading...</span>
+        </div>
+      </div>
+    </ng-template>

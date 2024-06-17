@@ -1,0 +1,230 @@
+<div class="flex items-center justify-center p-4">
+  <div class="container overflow-auto">
+    <!-- <a routerLink="/createUser">Add</a> -->
+    <div class="flex justify-between">
+      <h1 class="bg-teal-400 hover:bg-teal-500 py-2 px-4 rounded text-white font-bold">Liste des utilisateur</h1>
+      <button (click)="openModal()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Add
+      </button>
+     </div>
+    <table class="w-full sm:bg-white rounded-lg overflow-hidden sm:shadow-lg my-5">
+      <thead class="text-white bg-teal-400">
+        <tr>
+          <th class="p-3 text-left">ID</th>
+          <th class="p-3 text-left">Username</th>
+          <th class="p-3 text-left">Email</th>
+          <th class="p-3 text-left">First Name</th>
+          <th class="p-3 text-left">Last Name</th>
+          <th class="p-3 text-left">Type</th>
+          <th class="p-3 text-left">Phone</th>
+          <th class="p-3 text-left">Address</th>
+          <th class="p-3 text-left">Hire Date</th>
+          <th class="p-3 text-left" width="110px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let utilisateur of paginatedUtilisateurs" class="hover:bg-gray-100">
+          <td class="border-grey-light border p-3">{{ utilisateur.id }}</td>
+          <td class="border-grey-light border p-3">{{ utilisateur.username }}</td>
+          <td class="border-grey-light border p-3 truncate">{{ utilisateur.email }}</td>
+          <td class="border-grey-light border p-3">{{ utilisateur.first_name }}</td>
+          <td class="border-grey-light border p-3">{{ utilisateur.last_name }}</td>
+          <td class="border-grey-light border p-3">
+            {{ utilisateur.type_utilisateur }} 
+            <span *ngIf="utilisateur.type_utilisateur === 'chauffeur'">
+              ({{ utilisateur.enContrat ? 'En contrat' : 'Libre' }})
+            </span>
+          </td>
+          <td class="border-grey-light border p-3">{{ utilisateur.telephone }}</td>
+          <td class="border-grey-light border p-3 truncate">{{ utilisateur.adresse }}</td>
+          <td class="border-grey-light border p-3">{{ utilisateur.date_embauche | date }}</td>
+          <td class="border-grey-light border p-3 flex items-center space-x-2">
+            <button *ngIf="utilisateur.type_utilisateur != 'admin'" class="text-blue-600 hover:text-blue-900" (click)="onEdit(utilisateur)">Edit</button>
+            <button  class="text-red-600 hover:text-red-900" (click)="onDelete(utilisateur.id)">Delete</button>
+          </td>
+        </tr>
+        
+      </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <div class="flex justify-evenly mt-4">
+      <button (click)="previousPage()" [disabled]="currentPage <= 1" class="px-4 py-2 bg-blue-500 text-white rounded">Précédent</button>
+      <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage >= totalPages" class="px-4 py-2 bg-blue-500 text-white rounded">Suivant</button>
+    </div>
+  
+    <div *ngIf="paginatedUtilisateurs.length === 0">
+      <p>No utilisateurs found.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- Bouton pour ouvrir la modal -->
+
+  
+  <!-- Modal -->
+  <div class="modal fixed z-50 inset-0 overflow-y-auto" *ngIf="showModal">
+    <div class=" bg-gray-900 opacity-50"></div>
+    <div class="modal-content bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <div class="modal-header flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold">Create User</h2>
+        <button (click)="closeModal()" class="text-gray-500 hover:text-gray-800">&times;</button>
+      </div>
+      <!-- Formulaire utilisateur -->
+      <form [formGroup]="userForm"  class="space-y-6 gap-5 grid grid-cols-1 md:grid-cols-3">
+        <div>
+          <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+          <input
+            id="username"
+            type="text"
+            formControlName="username"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['username'].invalid && formControls['username'].touched}"
+          />
+          <div *ngIf="formControls['username'].invalid && formControls['username'].touched" class="text-red-500 text-sm mt-1">
+            Username is required and must be at least 3 characters.
+          </div>
+        </div>
+    
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['email'].invalid && formControls['email'].touched}"
+          />
+          <div *ngIf="formControls['email'].invalid && formControls['email'].touched" class="text-red-500 text-sm mt-1">
+            Valid email is required.
+          </div>
+        </div>
+    
+        <div>
+          <label for="first_name" class="block text-sm font-medium text-gray-700">First Name</label>
+          <input
+            id="first_name"
+            type="text"
+            formControlName="first_name"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['first_name'].invalid && formControls['first_name'].touched}"
+          />
+          <div *ngIf="formControls['first_name'].invalid && formControls['first_name'].touched" class="text-red-500 text-sm mt-1">
+            First Name is required.
+          </div>
+        </div>
+    
+        <div>
+          <label for="last_name" class="block text-sm font-medium text-gray-700">Last Name</label>
+          <input
+            id="last_name"
+            type="text"
+            formControlName="last_name"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['last_name'].invalid && formControls['last_name'].touched}"
+          />
+          <div *ngIf="formControls['last_name'].invalid && formControls['last_name'].touched" class="text-red-500 text-sm mt-1">
+            Last Name is required.
+          </div>
+        </div>
+    
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['password'].invalid && formControls['password'].touched}"
+          />
+          <div *ngIf="formControls['password'].invalid && formControls['password'].touched" class="text-red-500 text-sm mt-1">
+            Password is required and must be at least 6 characters.
+          </div>
+        </div>
+    
+        <div>
+          <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+          <input
+            id="confirm_password"
+            type="password"
+            formControlName="confirm_password"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['confirm_password'].invalid && formControls['confirm_password'].touched}"
+          />
+          <div *ngIf="formControls['confirm_password'].invalid && formControls['confirm_password'].touched" class="text-red-500 text-sm mt-1">
+            <span *ngIf="formControls['confirm_password'].errors?.['passwordMismatch']">Passwords must match.</span>
+            <span *ngIf="formControls['confirm_password'].errors?.['required']">Confirmation Password is required.</span>
+          </div>
+        </div>
+    
+        <div>
+          <label for="type_utilisateur" class="block text-sm font-medium text-gray-700">Type</label>
+          <select
+            id="type_utilisateur"
+            formControlName="type_utilisateur"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['type_utilisateur'].invalid && formControls['type_utilisateur'].touched}"
+          >
+            <option value="">Select Type</option>
+            <option value="chauffeur">Chauffeur</option>
+            <option value="manager">Manager</option>
+          </select>
+          <div *ngIf="formControls['type_utilisateur'].invalid && formControls['type_utilisateur'].touched" class="text-red-500 text-sm mt-1">
+            User type is required.
+          </div>
+        </div>
+    
+        <div>
+          <label for="telephone" class="block text-sm font-medium text-gray-700">Phone</label>
+          <input
+            id="telephone"
+            type="tel"
+            formControlName="telephone"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['telephone'].invalid && formControls['telephone'].touched}"
+          />
+          <div *ngIf="formControls['telephone'].invalid && formControls['telephone'].touched" class="text-red-500 text-sm mt-1">
+            Valid phone number is required.
+          </div>
+        </div>
+    
+        <div>
+          <label for="adresse" class="block text-sm font-medium text-gray-700">Address</label>
+          <input
+            id="adresse"
+            type="text"
+            formControlName="adresse"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['adresse'].invalid && formControls['adresse'].touched}"
+          />
+          <div *ngIf="formControls['adresse'].invalid && formControls['adresse'].touched" class="text-red-500 text-sm mt-1">
+            Address is required.
+          </div>
+        </div>
+    
+       
+    
+        <button
+        *ngIf="!isEditMode"
+        (click)="onSubmit()"
+        class="w-full z-10 py-2 px-4 bg-teal-500 text-white rounded-md shadow-md hover:bg-teal-700 transition duration-150"
+        [disabled]="userForm.invalid"
+      >
+        Create User
+      </button>
+      
+      <button
+        *ngIf="isEditMode"
+        class="w-full z-10 py-2 px-4 bg-teal-500 text-white rounded-md shadow-md hover:bg-teal-700 transition duration-150"
+        [disabled]="userForm.invalid"
+        (click)="onUpdate()"
+      >
+        Update User
+      </button>
+      
+      </form>
+    </div>
+  </div>
+  

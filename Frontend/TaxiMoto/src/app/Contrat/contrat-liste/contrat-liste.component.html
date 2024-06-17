@@ -1,0 +1,219 @@
+<!-- Contrat Liste Component HTML -->
+<div class="flex items-center justify-center p-4">
+  <div class="container overflow-auto">
+   <div class="flex justify-between">
+    <h1 class="bg-teal-400 hover:bg-teal-500 py-2 px-4 rounded text-white font-bold">Liste des contrats</h1>
+    <button (click)="openModal()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+      Add
+    </button>
+   </div>
+    <table class="w-full sm:bg-white rounded-lg overflow-hidden sm:shadow-lg my-5">
+      <thead class="text-white bg-teal-400">
+        <tr>
+          <th class="p-3 text-left">ID</th>
+          <th class="p-3 text-left">Chauffeur</th>
+          <th class="p-3 text-left">Moto</th>
+          <th class="p-3 text-left">Type Contrat</th>
+          <th class="p-3 text-left">Montant Initial</th>
+          <th class="p-3 text-left">Montant Journalier</th>
+          <th class="p-3 text-left">Date Début</th>
+          <th class="p-3 text-left">Date Fin</th>
+          <th class="p-3 text-left">État</th>
+          <th class="p-3 text-left" width="110px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let contrat of paginateContrats" class="hover:bg-gray-100">
+          <td class="border-grey-light border p-3">{{ contrat.id }}</td>
+          <td class="border-grey-light border p-3">{{ contrat.chauffeur.first_name }}<br>{{contrat.chauffeur.last_name}}</td>
+          <td class="border-grey-light border p-3">{{ contrat.moto.numero_serie }}</td>
+          <td class="border-grey-light border p-3">{{ contrat.type_contrat }}</td>
+          <td class="border-grey-light border p-3">{{ contrat.montant_initial | number:'1.2-2'}}</td>
+          <td class="border-grey-light border p-3">{{ contrat.montant_journalier | number:'1.2-2' }}</td>
+          <td class="border-grey-light border p-3">{{ contrat.date_debut | date }}</td>
+          <td class="border-grey-light border p-3">{{ contrat.date_fin | date }}</td>
+          <td class="border-grey-light border p-3">{{ contrat.etat }}</td>
+          <td class="border-grey-light border p-3 flex items-center space-x-2">
+            <button class="text-blue-600 hover:text-blue-900" (click)="editContrat(contrat)">Edit</button>
+            <button   class="text-red-600 hover:text-red-900" (click)="deleteContrat(contrat.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+            <!-- Pagination Controls -->
+             <div class="flex justify-evenly mt-4">
+              <button (click)="previousPage()" [disabled]="currentPage <= 1" class="px-4 py-2 bg-blue-500 text-white rounded">Précédent</button>
+              <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+              <button (click)="nextPage()" [disabled]="currentPage >= totalPages" class="px-4 py-2 bg-blue-500 text-white rounded">Suivant</button>
+            </div>
+
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fixed z-50 inset-0 overflow-y-auto" *ngIf="showModal">
+    <div class="bg-gray-900 opacity-50"></div>
+    <div class="modal-content bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <div class="modal-header flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold">{{ isEditMode ? 'Update' : 'Add' }} Contrat</h2>
+        <button (click)="closeModal()" class="text-gray-500 hover:text-gray-800">&times;</button>
+      </div>
+      <!-- Formulaire de contrat -->
+      <form [formGroup]="contratForm" class="space-y-6" (ngSubmit)="onSubmit()">
+  <div>
+        <label for="chauffeur" class="block text-sm font-medium text-gray-700">Chauffeur</label>
+        <select
+        id="chauffeur"
+        formControlName="chauffeur"
+        class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+        [ngClass]="{'border-red-500': formControls['chauffeur'].invalid && formControls['chauffeur'].touched}">
+        <option  value="">Select Chauffeur</option>
+        <option *ngFor="let chauffeur of chauffeurs"  value="{{chauffeur.id}}" 
+                [selected]="isEditMode && selectedContrat.chauffeur.id === chauffeur.id">{{ chauffeur.username }}</option>
+    </select>
+    
+    <div class="text-red-600 mt-1" *ngIf="formControls['chauffeur'].invalid && formControls['chauffeur'].touched">
+      Chauffeur is required.
+    </div>
+  </div>
+
+  <div>
+    <label for="moto" class="block text-sm font-medium text-gray-700">Moto</label>
+    <select
+      id="moto"
+      formControlName="moto"
+      class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+      [ngClass]="{'border-red-500': formControls['moto'].invalid && formControls['moto'].touched}">
+      <option value="">Select Moto</option>
+      <option *ngFor="let moto of motos" value="{{moto.id}}"   
+              [selected]="isEditMode && selectedContrat.moto.id === moto.id">{{ moto.numero_serie }}</option>
+    </select>
+    <div class="text-red-600 mt-1" *ngIf="formControls['moto'].invalid && formControls['moto'].touched">
+      Moto is required.
+    </div>
+  </div>
+
+  
+        <div>
+          <label for="type_contrat" class="block text-sm font-medium text-gray-700">Type Contrat</label>
+          <select
+            id="type_contrat"
+            formControlName="type_contrat"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['type_contrat'].invalid && formControls['type_contrat'].touched}">
+            <option selected value="">Select contrat type</option>
+            <option value="credit">Crédit</option>
+            <option value="embauche">Embauche</option>
+          </select>
+          <div class="text-red-600 mt-1" *ngIf="formControls['type_contrat'].invalid && formControls['type_contrat'].touched">
+            Type Contrat is required.
+          </div>
+        </div>
+  
+       <div>
+                <label for="montant_initial" class="block text-sm font-medium text-gray-700">
+                    Montant Initial
+                </label>
+                <input id="montant_initial" type="number" formControlName="montant_initial" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" [ngClass]="{'border-red-500': formControls['montant_initial'].invalid && formControls['montant_initial'].touched}"  >
+                <div class="text-red-600 mt-1" *ngIf="formControls['montant_initial'].invalid && formControls['montant_initial'].touched">
+                    <div *ngIf="formControls['montant_initial'].errors?.['required']">Montant Initial est requis.</div>
+                    <div *ngIf="formControls['montant_initial'].errors?.['pattern']">Montant Initial doit être un nombre valide <br>(8 chiffres maximum et 2 chiffres après la virgule).</div>
+                </div>
+            </div>
+        
+        <div>
+          <label for="montant_journalier" class="block text-sm font-medium text-gray-700">
+            Montant Journalier
+          </label>
+          <input
+            id="montant_journalier"
+            type="number"
+            formControlName="montant_journalier"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['montant_journalier'].invalid && formControls['montant_journalier'].touched}"
+          />
+          <div class="text-red-600 mt-1" *ngIf="formControls['montant_journalier'].invalid && formControls['montant_journalier'].touched">
+            <div *ngIf="formControls['montant_journalier'].errors?.['required']">Montant Journalier est requis.</div>
+            <div *ngIf="formControls['montant_journalier'].errors?.['pattern']">Montant Journalier doit être un nombre valide <br>(8 chiffres maximum et 2 chiffres apres la virgule).</div>
+          </div>
+        </div>
+        
+        <div>
+          <label for="date_debut" class="block text-sm font-medium text-gray-700">Date Début</label>
+          <input
+            id="date_debut"
+            type="date"
+            formControlName="date_debut"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['date_debut'].invalid && formControls['date_debut'].touched}">
+          <div class="text-red-600 mt-1" *ngIf="formControls['date_debut'].invalid && formControls['date_debut'].touched">
+            Date Début is required.
+          </div>
+        </div>
+  
+        <div>
+          <label for="date_fin" class="block text-sm font-medium text-gray-700">Date Fin</label>
+          <input
+            id="date_fin"
+            type="date"
+            formControlName="date_fin"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['date_fin'].invalid && formControls['date_fin'].touched}">
+        </div>
+  
+        <div>
+          <label for="etat" class="block text-sm font-medium text-gray-700">État</label>
+          <select
+            id="etat"
+            formControlName="etat"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            [ngClass]="{'border-red-500': formControls['etat'].invalid && formControls['etat'].touched}">
+            <option value="">Select Etat</option>
+            <option  value="en_cours">En cours</option>
+            <option  [disabled]="!isEditMode ? true : false" value="termine">Terminé</option>
+            <option  [disabled]="!isEditMode ? true : false" value="annule">Annulé</option>
+          </select>
+          <div class="text-red-600 mt-1" *ngIf="formControls['etat'].invalid && formControls['etat'].touched">
+            État is required.
+          </div>
+        </div>
+  
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+            (click)="closeModal()"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            [disabled]="contratForm.invalid"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            {{ isEditMode ? 'Update' : 'Add' }} Contrat
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+   
+  <!-- Spiner -->
+  <ng-template #noDatableEvalable>
+    <div class="fixed inset-0 flex items-center justify-center bg-white bg-opacity-80 z-50">
+      <div aria-label="Loading..." role="status" class="flex flex-col items-center space-y-4">
+        <svg class="h-20 w-20 animate-spin stroke-gray-600" viewBox="0 0 256 256">
+          <line x1="128" y1="32" x2="128" y2="64" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+          <line x1="195.9" y1="60.1" x2="173.3" y2="82.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+          <line x1="224" y1="128" x2="192" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+          <line x1="195.9" y1="195.9" x2="173.3" y2="173.3" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+          <line x1="128" y1="224" x2="128" y2="192" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+          <line x1="60.1" y1="195.9" x2="82.7" y2="173.3" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+          <line x1="32" y1="128" x2="64" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+          <line x1="60.1" y1="60.1" x2="82.7" y2="82.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+        </svg>
+        <span class="text-xl font-medium text-gray-600">Loading...</span>
+      </div>
+    </div>
+  </ng-template>

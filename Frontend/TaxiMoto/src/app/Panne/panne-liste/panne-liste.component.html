@@ -1,0 +1,133 @@
+<!-- panne.component.html -->
+<div class="flex items-center justify-center p-4">
+    <div class="container overflow-auto">
+      <div class="flex justify-between">
+        <h1 class="bg-teal-400 hover:bg-teal-500 py-2 px-4 rounded text-white font-bold">On gere les pannes des motos en contrat d'embauche</h1>
+        <button (click)="openModal()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Add
+        </button>
+       </div>
+      <table class="w-full sm:bg-white rounded-lg overflow-hidden sm:shadow-lg my-5">
+        <thead class="text-white bg-teal-400">
+          <tr>
+            <th class="p-3 text-left">ID</th>
+            <th class="p-3 text-left">Moto</th>
+            <th class="p-3 text-left">Description</th>
+            <th class="p-3 text-left">Date Signalement</th>
+            <th class="p-3 text-left">État</th>
+            <th class="p-3 text-left" width="110px">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let panne of paginatedPannes" class="hover:bg-gray-100">
+            <td class="border-grey-light border p-3">{{ panne.id }}</td>
+            <td class="border-grey-light border p-3">{{ panne.moto.numero_serie }}</td>
+            <td class="border-grey-light border p-3">{{ panne.description }}</td>
+            <td class="border-grey-light border p-3">{{ panne.date_signalement | date }}</td>
+            <td class="border-grey-light border p-3">{{ panne.etat }}</td>
+            <td class="border-grey-light border p-3 flex items-center space-x-2">
+              <button class="text-blue-600 hover:text-blue-900" (click)="editPanne(panne)">Edit</button>
+              <button class="text-red-600 hover:text-red-900" (click)="deletePanne(panne.id!)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+  
+      <!-- Pagination Controls -->
+    <div class="flex justify-evenly mt-4">
+      <button (click)="previousPage()" [disabled]="currentPage <= 1" class="px-4 py-2 bg-blue-500 text-white rounded">Précédent</button>
+      <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage >= totalPages" class="px-4 py-2 bg-blue-500 text-white rounded">Suivant</button>
+    </div>
+  
+    <div *ngIf="paginatedPannes.length === 0">
+      <p>No utilisateurs found.</p>
+    </div>
+      
+    </div>
+  </div>
+  
+  <!-- Modal -->
+  <div class="modal fixed z-50 inset-0 overflow-y-auto" *ngIf="showModal">
+      <div class="bg-gray-900 opacity-50"></div>
+      <div class="modal-content bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <div class="modal-header flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold">{{ isEditMode ? 'Update' : 'Add' }} Panne</h2>
+          <button (click)="closeModal()" class="text-gray-500 hover:text-gray-800">&times;</button>
+        </div>
+        <form [formGroup]="panneForm" class="space-y-6" (ngSubmit)="onSubmit()">
+          <div>
+            <label for="moto" class="block text-sm font-medium text-gray-700">Moto</label>
+            <select
+              id="moto"
+              formControlName="moto"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+              [ngClass]="{'border-red-500': formControls['moto'].invalid && formControls['moto'].touched}">
+              <option value="">Select Moto</option>
+              <option *ngFor="let moto of motos" [selected]="isEditMode && selectedPanne?.moto?.id === moto?.id" value="{{moto.id}}">{{ moto.numero_serie }}</option>
+            </select>
+            <div class="text-red-600 mt-1" *ngIf="formControls['moto'].invalid && formControls['moto'].touched">
+              Moto is required.
+            </div>
+          </div>
+  
+          <div>
+            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea
+              id="description"
+              formControlName="description"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+              [ngClass]="{'border-red-500': formControls['description'].invalid && formControls['description'].touched}"></textarea>
+            <div class="text-red-600 mt-1" *ngIf="formControls['description'].invalid && formControls['description'].touched">
+              Description is required.
+            </div>
+          </div>
+  
+          <div>
+            <label for="date_signalement" class="block text-sm font-medium text-gray-700">Date Signalement</label>
+            <input
+              id="date_signalement"
+              type="date"
+              formControlName="date_signalement"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+              [ngClass]="{'border-red-500': formControls['date_signalement'].invalid && formControls['date_signalement'].touched}">
+            <div class="text-red-600 mt-1" *ngIf="formControls['date_signalement'].invalid && formControls['date_signalement'].touched">
+              Date Signalement is required.
+            </div>
+          </div>
+  
+          <div>
+            <label for="etat" class="block text-sm font-medium text-gray-700">État</label>
+            <select
+              id="etat"
+              formControlName="etat"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+              [ngClass]="{'border-red-500': formControls['etat'].invalid && formControls['etat'].touched}">
+              <option value="non_corrigee">Non corrigée</option>
+              <option value="corrigee">Corrigée</option>
+            </select>
+            <div class="text-red-600 mt-1" *ngIf="formControls['etat'].invalid && formControls['etat'].touched">
+              État is required.
+            </div>
+          </div>
+  
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+              (click)="closeModal()"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              [disabled]="panneForm.invalid"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              {{ isEditMode ? 'Update' : 'Add' }} Panne
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  
