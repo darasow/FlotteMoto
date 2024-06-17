@@ -66,8 +66,14 @@
   
   <!-- Modal -->
   <div class="modal fixed z-50 inset-0 overflow-y-auto" *ngIf="showModal">
-    <div class=" bg-gray-900 opacity-50"></div>
+    
+  
     <div class="modal-content bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <div *ngIf="errorMessages.length > 0" class="error-container">
+        <ul>
+            <li *ngFor="let error of errorMessages">{{ error }}</li>
+        </ul>
+    </div>
       <div class="modal-header flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold">Create User</h2>
         <button (click)="closeModal()" class="text-gray-500 hover:text-gray-800">&times;</button>

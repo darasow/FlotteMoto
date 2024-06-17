@@ -21,6 +21,7 @@ export class UserListeComponent implements OnInit {
   isEditMode: boolean = false;
   currentUser: any;
   user: any;
+  errorMessages : string[] = []
 
   constructor(private fb: FormBuilder, private route: ActivatedRoute ,
     private utilisateurService: UtilisateurService, private router: Router, private authService: AuthService) {
@@ -173,21 +174,48 @@ export class UserListeComponent implements OnInit {
   }
 
   onSubmit() {
-  if (this.userForm.valid) {
-    const { confirm_password, ...userData } = this.userForm.value;
-    this.utilisateurService.createUtilisateur(userData).subscribe({
-      next: () => {
-        this.closeModal();
-        this.userForm.reset();
-        this.getUtilisateurs();
-        
-      },
-      error: (err) => {
-        console.error('Error creating user:', err);
-      }
-    });
+    if (this.userForm.valid) {
+      const { confirm_password, ...userData } = this.userForm.value;
+      this.utilisateurService.createUtilisateur(userData).subscribe({
+        next: () => {
+          this.closeModal();
+          this.userForm.reset();
+          this.getUtilisateurs();
+          this.errorMessages = []; // Clear previous errors
+        },
+        error: (err) => {
+          this.errorMessages = this.extractErrorMessages(err);
+        }
+      });
+    }
   }
+  
+
+extractErrorMessages(errorResponse: any): string[] {
+  let errors: string[] = [];
+
+  if (errorResponse.error && typeof errorResponse.error === 'object') {
+    for (let key in errorResponse.error) {
+      if (errorResponse.error.hasOwnProperty(key)) {
+        const errorArray = errorResponse.error[key];
+        if (Array.isArray(errorArray)) {
+          errorArray.forEach((err: string) => {
+            errors.push(`${key}: ${err}`);
+          });
+        } else {
+          errors.push(`${key}: ${errorResponse.error[key]}`);
+        }
+      }
+    }
+  } else if (errorResponse.message) {
+    errors.push(errorResponse.message);
+  } else {
+    errors.push('Une erreur inattendue est survenue.');
+  }
+
+  return errors;
 }
+
 
   get formControls() {
     return this.userForm.controls;
