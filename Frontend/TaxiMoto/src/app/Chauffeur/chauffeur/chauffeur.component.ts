@@ -46,7 +46,14 @@ export class ChauffeurComponent implements OnInit {
     this.loadPannesChauffeur()
     this.loadEntretienChauffeur()
   }
-
+  logout(user : Utilisateur) {
+    if(confirm(`Voullez vous deconnectez ${user.username}`))
+    {
+      
+      this.authService.logout();
+    }
+      
+  }
 
 // ****************** Recettes
   loadRecetteChauffeur(page : number = 1)
