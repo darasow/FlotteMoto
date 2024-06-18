@@ -23,6 +23,7 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'chauffeur', component: ChauffeurComponent, canActivate: [AuthGuard] },
   { path: '', component: LayoutComponent, children: [
+
     { path: 'dashboard', component: DashboardComponent },
     { path: 'utilisateurs', component: UserListeComponent },
     { path: 'moto', component: MotoComponent },
@@ -31,7 +32,7 @@ const routes: Routes = [
     { path: 'contrat', component: ContratComponent },
     { path: 'entretien', component: EntretienListeComponent},
     { path: 'roles', component: RoleComponent},  // Route pour lister les rôles
-  ], canActivate: [AuthGuard] },
+  ], canActivate: [AuthGuard] ,  data: { roles: ['admin', 'manager']}},
   { path: '**', redirectTo: '/login', pathMatch: 'full' }, // Pour gérer les routes inconnues
 ];
 

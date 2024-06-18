@@ -106,8 +106,6 @@ export class UserListeComponent implements OnInit {
   onEdit(utilisateur: Utilisateur) {
     this.isEditMode = true; // Activer le mode édition
     this.utilisateur = utilisateur; // Stocker l'utilisateur à éditer
-    // Retirez les validateurs de mot de passe en mode édition
-    // this.removePasswordValidators();
   
     // Pré-remplir le formulaire avec les données de l'utilisateur sélectionné
     this.userForm.patchValue({
@@ -129,7 +127,6 @@ export class UserListeComponent implements OnInit {
   onUpdate() {
     if (this.userForm.valid && this.utilisateur) {
       // Filtrer les champs non 
-      
       const { confirm_password, password, ...userData } = this.userForm.value;
       if (password) {
         userData['password'] = password;
@@ -154,6 +151,7 @@ export class UserListeComponent implements OnInit {
   // Méthode pour fermer la modal
   closeModal() {
     this.userForm.reset()
+    this.errorMessages = []
     this.showModal = false;
   }
 

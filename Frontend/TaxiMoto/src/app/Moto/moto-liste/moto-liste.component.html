@@ -3,10 +3,12 @@
     <div class="container overflow-auto">
       <div class="flex justify-between">
         <h1 class="bg-teal-400 hover:bg-teal-500 py-2 px-4 rounded text-white font-bold">Liste des motos</h1>
+       
         <button (click)="openModal()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Add
         </button>
        </div>
+     
       <table *ngIf="paginateMotos.length > 0;" class="w-full sm:bg-white rounded-lg overflow-hidden sm:shadow-lg my-5">
         <thead class="text-white bg-teal-400">
           <tr>

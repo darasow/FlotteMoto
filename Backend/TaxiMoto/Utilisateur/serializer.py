@@ -53,7 +53,11 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         data = super().validate(attrs)
 
+        # Sérialiser les données de l'utilisateur
         user_serializer = UserSerializer(self.user)
         data['user'] = user_serializer.data
 
+        # Récupérer les rôles de l'utilisateur
+        roles = list(self.user.groups.values_list('name', flat=True))
+        data['roles'] = roles
         return data

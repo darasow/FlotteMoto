@@ -133,6 +133,8 @@ export class RecetteListeComponent implements OnInit {
   onSubmit() {
     if (this.recetteForm.valid) {
       const formData = this.recetteForm.value;
+      console.log(formData.chauffeur);
+      
       if (this.currentRecette) {
         this.recetteService.updateRecette(this.currentRecette.id, formData).subscribe({
            next : ()=> {
