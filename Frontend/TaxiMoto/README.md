@@ -20,7 +20,7 @@
 ## Logique des utilisateurs:
    - J'ai mis en place les permissions seul les admins peuvent deleter les objets
    - Les manager peuvent creer un chauffeur
-   - chauffeurs voient leurs recettes(s'ils sont en contrat credit), les pannes en entretiens de leurs moto (s'ils sont en contrat d'embauche)
+   - chauffeurs voient leurs recettes(s'ils sont en contrat credit), les pannes et entretiens de leurs moto (s'ils sont en contrat d'embauche)
 
    
 
