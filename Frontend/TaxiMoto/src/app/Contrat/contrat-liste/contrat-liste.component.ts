@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ContratService } from '../contrat.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { extractErrorMessages } from 'src/app/Util/Util';
 
 @Component({
   selector: 'app-contrat-liste',
@@ -26,6 +27,7 @@ export class ContratComponent implements OnInit {
   selectedContrat : any
   selectedChauffeurEncours : any
   isMontantInitialEnabled: boolean = false;
+  errorMessages : string[] = []
   constructor(private authService : AuthService, private contratService: ContratService, private fb: FormBuilder) {
     this.contratForm = this.fb.group({
       chauffeur: ['', Validators.required],
@@ -116,9 +118,10 @@ export class ContratComponent implements OnInit {
       next: () => {
         this.listeContrat();
         this.closeModal();
+        this.errorMessages = []
       },
       error: (err) => {
-        console.error(err);
+        this.errorMessages = extractErrorMessages(err)
       }
     });
   }
@@ -139,9 +142,10 @@ export class ContratComponent implements OnInit {
         next: () => {
           this.listeContrat();
           this.closeModal();
+          this.errorMessages = []
         },
         error: (err) => {
-          console.error(err);
+          this.errorMessages = extractErrorMessages(err)
         }
       });
     } else {

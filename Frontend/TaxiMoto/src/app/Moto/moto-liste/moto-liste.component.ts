@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MotoService } from '../moto.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { Moto } from 'src/app/interface/Moto';
+import { extractErrorMessages } from 'src/app/Util/Util';
 
 @Component({
   selector: 'app-moto',
@@ -21,12 +22,12 @@ export class MotoComponent implements OnInit {
   isEditMode: boolean = false; // Variable pour suivre l'état de l'édition
   currentUser: any;
   user: any;
-
+  errorMessages : string[] = []
   constructor(private authService: AuthService,private motoService: MotoService, private fb: FormBuilder) {
     this.motoForm = this.fb.group({
       numero_serie: ['', Validators.required],
       couleur: ['', Validators.required],
-      date_achat: [''],
+      date_achat: ['', Validators.required],
       // Ajouter d'autres champs si nécessaire
     });
   }
@@ -69,9 +70,10 @@ export class MotoComponent implements OnInit {
         next: () => {
           this.closeModal();
           this.getMotos();
+          this.errorMessages = []
         },
         error: (err) => {
-          console.log(err);
+          this.errorMessages = extractErrorMessages(err);
         }
       });
     }
@@ -85,9 +87,10 @@ export class MotoComponent implements OnInit {
           this.isEditMode = false
           this.closeModal();
           this.getMotos();
+          this.errorMessages = []
         },
         error: (err) => {
-          console.log(err);
+          this.errorMessages = extractErrorMessages(err);
         }
       });
     }

@@ -6,6 +6,7 @@ import { EntretienService } from '../entretien.service';
 import { MotoService } from 'src/app/Moto/moto.service';
 import { Moto } from 'src/app/interface/Moto';
 import { Entretien } from 'src/app/interface/Entretien';
+import { extractErrorMessages } from 'src/app/Util/Util';
 
 @Component({
   selector: 'app-entretien-liste',
@@ -23,6 +24,8 @@ export class EntretienListeComponent implements OnInit {
   itemsPerPage = 5;
   totalPages = 0;
   paginatedEntretiens: Entretien[] = [];
+  errorMessages : string[] = []
+
 
   constructor(
     private entretienService: EntretienService,
@@ -93,14 +96,26 @@ export class EntretienListeComponent implements OnInit {
     if (this.entretienForm.valid) {
       const formData = this.entretienForm.value;
       if (this.isEditMode && this.selectedEntretien) {
-        this.entretienService.updateEntretien(this.selectedEntretien.id!, formData).subscribe(() => {
-          this.loadEntretiens();
-          this.closeModal();
+        this.entretienService.updateEntretien(this.selectedEntretien.id!, formData).subscribe( {
+           next : () =>{
+            this.loadEntretiens();
+            this.closeModal();
+            this.errorMessages = []
+           },
+           error : (error) =>{
+              this.errorMessages = extractErrorMessages(error)
+           }
         });
       } else {
-        this.entretienService.createEntretien(formData).subscribe(() => {
-          this.loadEntretiens();
-          this.closeModal();
+        this.entretienService.createEntretien(formData).subscribe( {
+          next : () =>{
+            this.loadEntretiens();
+            this.closeModal();
+            this.errorMessages = []
+           },
+           error : (error) =>{
+              this.errorMessages = extractErrorMessages(error)
+           }
         });
       }
     }

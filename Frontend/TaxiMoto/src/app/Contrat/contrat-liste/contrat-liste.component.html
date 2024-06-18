@@ -59,7 +59,11 @@
         <h2 class="text-xl font-bold">{{ isEditMode ? 'Update' : 'Add' }} Contrat</h2>
         <button (click)="closeModal()" class=" text-white rounded-xl py-[10px] px-[20px] bg-[#007bff]">&times;</button>
       </div>
-    
+      <div *ngIf="errorMessages.length > 0" class="error-container">
+        <ul>
+            <li class="bg-red-500" *ngFor="let error of errorMessages">{{ error }}</li>
+        </ul>
+    </div>
       <!-- Formulaire de contrat -->
       <form [formGroup]="contratForm" class="space-y-6" (ngSubmit)="onSubmit()">
   <div>

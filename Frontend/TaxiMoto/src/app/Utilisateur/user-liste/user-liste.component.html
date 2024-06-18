@@ -71,7 +71,7 @@
     <div class="modal-content bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
       <div *ngIf="errorMessages.length > 0" class="error-container">
         <ul>
-            <li *ngFor="let error of errorMessages">{{ error }}</li>
+            <li class="bg-red-500" *ngFor="let error of errorMessages">{{ error }}</li>
         </ul>
     </div>
       <div class="modal-header flex justify-between items-center mb-4">

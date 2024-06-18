@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Utilisateur } from 'src/app/interface/Utilisateur';
+import {extractErrorMessages} from 'src/app/Util/Util';
 @Component({
   selector: 'app-user-liste',
   templateUrl: './user-liste.component.html',
@@ -144,7 +145,7 @@ export class UserListeComponent implements OnInit {
 
         },
         error: (err) => {
-          this.errorMessages = this.extractErrorMessages(err);
+          this.errorMessages = extractErrorMessages(err);
         }
       });
     }
@@ -186,37 +187,13 @@ export class UserListeComponent implements OnInit {
           this.errorMessages = []; // Clear previous errors
         },
         error: (err) => {
-          this.errorMessages = this.extractErrorMessages(err);
+          this.errorMessages = extractErrorMessages(err);
         }
       });
     }
   }
   
 
-extractErrorMessages(errorResponse: any): string[] {
-  let errors: string[] = [];
-
-  if (errorResponse.error && typeof errorResponse.error === 'object') {
-    for (let key in errorResponse.error) {
-      if (errorResponse.error.hasOwnProperty(key)) {
-        const errorArray = errorResponse.error[key];
-        if (Array.isArray(errorArray)) {
-          errorArray.forEach((err: string) => {
-            errors.push(`${key}: ${err}`);
-          });
-        } else {
-          errors.push(`${key}: ${errorResponse.error[key]}`);
-        }
-      }
-    }
-  } else if (errorResponse.message) {
-    errors.push(errorResponse.message);
-  } else {
-    errors.push('Une erreur inattendue est survenue.');
-  }
-
-  return errors;
-}
 
 
   get formControls() {

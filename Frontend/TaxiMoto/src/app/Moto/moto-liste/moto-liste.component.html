@@ -62,6 +62,11 @@
         <h2 class="text-xl font-bold">Add</h2>
         <button (click)="closeModal()" class=" text-white rounded-xl py-[10px] px-[20px] bg-[#007bff]">&times;</button>
       </div>
+          <div *ngIf="errorMessages.length > 0" class="error-container">
+            <ul>
+                <li class="bg-red-500" *ngFor="let error of errorMessages">{{ error }}</li>
+            </ul>
+        </div>
       <!-- Moto Form -->
       <form [formGroup]="motoForm" class="space-y-6 gap-2 grid grid-cols-1">
         <div>
@@ -72,6 +77,9 @@
             formControlName="numero_serie"
             class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
           />
+          <div class="text-red-600 mt-1" *ngIf="formControls['numero_serie'].invalid && formControls['numero_serie'].touched">
+            Le numero de la serie est requis.
+          </div>
         </div>
         <div>
           <label for="couleur" class="block text-sm font-medium text-gray-700">Color</label>
@@ -81,6 +89,9 @@
             formControlName="couleur"
             class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
           />
+          <div class="text-red-600 mt-1" *ngIf="formControls['couleur'].invalid && formControls['couleur'].touched">
+            La couleur est requise.
+          </div>
         </div>
         <div>
           <label for="date_achat" class="block text-sm font-medium text-gray-700">Purchase Date</label>
@@ -90,6 +101,9 @@
             formControlName="date_achat"
             class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
           />
+          <div class="text-red-600 mt-1" *ngIf="formControls['date_achat'].invalid && formControls['date_achat'].touched">
+            La date est requise.
+          </div>
         </div>
         <!-- Add more fields here as needed -->
       </form>
