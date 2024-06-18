@@ -62,11 +62,11 @@
         <h2 class="text-xl font-bold">Add</h2>
         <button (click)="closeModal()" class=" text-white rounded-xl py-[10px] px-[20px] bg-[#007bff]">&times;</button>
       </div>
-          <div *ngIf="errorMessages.length > 0" class="error-container">
-            <ul>
-                <li class="bg-red-500" *ngFor="let error of errorMessages">{{ error }}</li>
-            </ul>
-        </div>
+      <div *ngIf="errorMessages.length > 0" class="error-container">
+        <ul>
+            <li class="bg-red-500 text-xl text-white p-4 font-bold" *ngFor="let error of errorMessages">{{ error }}</li>
+        </ul>
+    </div>
       <!-- Moto Form -->
       <form [formGroup]="motoForm" class="space-y-6 gap-2 grid grid-cols-1">
         <div>

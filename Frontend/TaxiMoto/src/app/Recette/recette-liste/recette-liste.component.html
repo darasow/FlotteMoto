@@ -129,6 +129,11 @@
               <h3 class="text-lg leading-6 font-medium text-gray-900">
                 {{ currentRecette ? 'Edit' : 'Add' }} Recette
               </h3>
+              <div *ngIf="errorMessages.length > 0" class="error-container">
+                <ul>
+                    <li class="bg-red-500 text-xl text-white p-4 font-bold" *ngFor="let error of errorMessages">{{ error }}</li>
+                </ul>
+            </div>
               <div class="mt-2">
                 <form [formGroup]="recetteForm" (ngSubmit)="onSubmit()">
                   <div>

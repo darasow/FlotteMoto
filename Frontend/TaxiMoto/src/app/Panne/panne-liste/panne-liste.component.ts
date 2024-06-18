@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PanneService } from '../panne.service';
 import { MotoService } from 'src/app/Moto/moto.service';
 import { Moto } from 'src/app/interface/Moto';
+import { extractErrorMessages } from 'src/app/Util/Util';
 @Component({
   selector: 'app-panne-liste',
   templateUrl: './panne-liste.component.html',
@@ -20,6 +21,7 @@ export class PanneListeComponent implements OnInit{
   itemsPerPage = 5;
   totalPages = 0;
   paginatedPannes: Panne[] = [];
+  errorMessages : string[] = []
 
   constructor(
     private panneService: PanneService,
@@ -98,14 +100,26 @@ export class PanneListeComponent implements OnInit{
     if (this.panneForm.valid) {
       const formData = this.panneForm.value;
       if (this.isEditMode && this.selectedPanne) {
-        this.panneService.updatePanne(this.selectedPanne.id!, formData).subscribe(() => {
-          this.loadPannes();
-          this.closeModal();
+        this.panneService.updatePanne(this.selectedPanne.id!, formData).subscribe( {
+          next : ()=>{
+            this.loadPannes();
+            this.closeModal();
+            this.errorMessages = []
+          },
+          error : (err) =>{
+            this.errorMessages = extractErrorMessages(err)
+          }
         });
       } else {
-        this.panneService.createPanne(formData).subscribe(() => {
-          this.loadPannes();
-          this.closeModal();
+        this.panneService.createPanne(formData).subscribe( {
+          next : ()=>{
+            this.loadPannes();
+            this.closeModal();
+            this.errorMessages = []
+          },
+          error : (err) =>{
+            this.errorMessages = extractErrorMessages(err)
+          }
         });
       }
     }

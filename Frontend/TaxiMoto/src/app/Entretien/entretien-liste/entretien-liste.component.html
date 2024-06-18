@@ -55,9 +55,9 @@
       </div>
       <div *ngIf="errorMessages.length > 0" class="error-container">
         <ul>
-            <li class="bg-red-500" *ngFor="let error of errorMessages">{{ error }}</li>
+            <li class="bg-red-500 text-xl text-white p-4 font-bold" *ngFor="let error of errorMessages">{{ error }}</li>
         </ul>
-    </div>
+       </div>
       <!-- Formulaire d'entretien -->
       <form [formGroup]="entretienForm" class="space-y-6" (ngSubmit)="onSubmit()">
         <!-- Champ Moto -->

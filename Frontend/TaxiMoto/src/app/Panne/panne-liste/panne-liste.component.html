@@ -55,6 +55,11 @@
           <h2 class="text-xl font-bold">{{ isEditMode ? 'Update' : 'Add' }} Panne</h2>
           <button (click)="closeModal()" class=" text-white rounded-xl py-[10px] px-[20px] bg-[#007bff]">&times;</button>
         </div>
+        <div *ngIf="errorMessages.length > 0" class="error-container">
+          <ul>
+              <li class="bg-red-500 text-xl text-white p-4 font-bold" *ngFor="let error of errorMessages">{{ error }}</li>
+          </ul>
+      </div>
         <form [formGroup]="panneForm" class="space-y-6" (ngSubmit)="onSubmit()">
           <div>
             <label for="moto" class="block text-sm font-medium text-gray-700">Moto</label>

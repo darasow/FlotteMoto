@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { RecetteService } from '../recette.service';
 import { ContratService } from 'src/app/Contrat/contrat.service';
 import { Recette } from 'src/app/interface/Recettes';
+import { extractErrorMessages } from 'src/app/Util/Util';
 
 @Component({
   selector: 'app-recette-liste',
@@ -22,7 +23,8 @@ export class RecetteListeComponent implements OnInit {
   totalPages = 0;
   paginatedRecette: Recette[] = [];
   modalActionOpen: boolean = false; // Ajout de la modal pour l'action
-  actionRecette: any = null; 
+  actionRecette: any = null;
+  errorMessages : string[] = [] 
 
   constructor(
     private fb: FormBuilder,
@@ -132,17 +134,25 @@ export class RecetteListeComponent implements OnInit {
     if (this.recetteForm.valid) {
       const formData = this.recetteForm.value;
       if (this.currentRecette) {
-        this.recetteService.updateRecette(this.currentRecette.id, formData).subscribe(() => {
-          this.loadRecettes();
-          this.closeModal();
+        this.recetteService.updateRecette(this.currentRecette.id, formData).subscribe({
+           next : ()=> {
+             this.loadRecettes();
+             this.closeModal();
+             this.errorMessages = []  
+        },
+        error : (err) =>{
+          this.errorMessages = extractErrorMessages(err)
+        }
         });
-      } else {
-        console.log(formData);
-        
-        this.recetteService.createRecette(formData).subscribe(() => {
-          
+      } else {        
+        this.recetteService.createRecette(formData).subscribe({
+         next : ()=> {
           this.loadRecettes();
           this.closeModal();
+        },
+        error : (err) =>{
+          this.errorMessages = extractErrorMessages(err)
+        }
         });
       }
     }
