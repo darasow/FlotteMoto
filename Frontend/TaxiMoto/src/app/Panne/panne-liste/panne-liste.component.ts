@@ -5,6 +5,8 @@ import { PanneService } from '../panne.service';
 import { MotoService } from 'src/app/Moto/moto.service';
 import { Moto } from 'src/app/interface/Moto';
 import { extractErrorMessages } from 'src/app/Util/Util';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+
 @Component({
   selector: 'app-panne-liste',
   templateUrl: './panne-liste.component.html',
@@ -20,6 +22,9 @@ export class PanneListeComponent implements OnInit{
   currentPage = 1;
   itemsPerPage = 5;
   totalPages = 0;
+  searchQuery: string = '';
+  selectedFilter: string = 'All';
+  searchSubject: BehaviorSubject<any>;
   paginatedPannes: Panne[] = [];
   errorMessages : string[] = []
 
@@ -28,6 +33,7 @@ export class PanneListeComponent implements OnInit{
     private motoService: MotoService, // Service pour Moto
     private fb: FormBuilder
   ) {
+    this.searchSubject = new BehaviorSubject<any>({ query: this.searchQuery, filter: this.selectedFilter });
     this.panneForm = this.fb.group({
       moto: ['', Validators.required],
       description: ['', Validators.required],
@@ -39,6 +45,30 @@ export class PanneListeComponent implements OnInit{
   ngOnInit(): void {
     this.loadPannes();
     this.loadMotos(); // Charger les motos disponibles
+  }
+
+  onSearchChange() {
+    this.searchSubject.next({ query: this.searchQuery, filter: this.selectedFilter });
+    this.searcheEvent()
+  }
+  searcheEvent()
+  {
+    this.searchSubject.pipe(
+      debounceTime(300), // Attendre 300ms après chaque frappe
+      distinctUntilChanged(), // Éviter les recherches identiques consécutives
+      switchMap(params => this.panneService.searchPannes(params.query, params.filter, this.currentPage, this.itemsPerPage))
+    ).subscribe({
+      next: (response) => {
+        this.pannes = response.results;        
+        this.totalPages = Math.ceil(response.count / this.itemsPerPage);
+        this.updatePagination();
+      },
+      error: (err) => console.log(err)
+    });
+  }
+  onSearch(event: Event) {
+    event.preventDefault();
+    this.onSearchChange();
   }
 
   loadPannes(page: number = 1) {
@@ -130,7 +160,7 @@ export class PanneListeComponent implements OnInit{
     {
       this.panneService.deletePanne(id).subscribe({
         next : () =>{
-          this.loadPannes
+          this.loadPannes()
         },
         error : (error) =>{
           if(error.status == 403)  alert(`Impossible vous n'avez pas les autorisations de supprimer \n Erreur : ${error.status } - ${error.statusText}`)

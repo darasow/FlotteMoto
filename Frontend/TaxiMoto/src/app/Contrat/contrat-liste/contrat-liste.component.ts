@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ContratService } from '../contrat.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { extractErrorMessages } from 'src/app/Util/Util';
+import { UtilisateurService } from 'src/app/Utilisateur/utilisateur.service';
+import { MotoService } from 'src/app/Moto/moto.service';
 
 @Component({
   selector: 'app-contrat-liste',
@@ -18,7 +20,7 @@ export class ContratComponent implements OnInit {
   isEditMode = false;
   isMontantInitialDisabled: boolean = true;
   currentPage = 1;
-  totalPages = 1;
+  totalPages = 0;
   itemsPerPage = 5
   selectedContratId: number | null = null;
   contratForm: FormGroup
@@ -28,7 +30,7 @@ export class ContratComponent implements OnInit {
   selectedChauffeurEncours : any
   isMontantInitialEnabled: boolean = false;
   errorMessages : string[] = []
-  constructor(private authService : AuthService, private contratService: ContratService, private fb: FormBuilder) {
+  constructor(private authService : AuthService, private utilisateurService : UtilisateurService, private motoService : MotoService,  private contratService: ContratService, private fb: FormBuilder) {
     this.contratForm = this.fb.group({
       chauffeur: ['', Validators.required],
       moto: ['', Validators.required],
@@ -111,8 +113,6 @@ export class ContratComponent implements OnInit {
     }
   }
   
-  
-
   createContrat(contratData: any) {
     this.contratService.addContrat(contratData).subscribe({
       next: () => {
@@ -193,7 +193,6 @@ export class ContratComponent implements OnInit {
     }
 }
 
-
   deleteContrat(contratId: number) {
     if(confirm("Voullez vous continuez?"))
     {
@@ -209,9 +208,9 @@ export class ContratComponent implements OnInit {
    
   }
 
-  getChauffeur(contrat : any = null)
+  getChauffeurLibre(contrat : any = null)
   {
-    this.contratService.getChauffeurs().subscribe({
+    this.utilisateurService.getChauffeursLibre().subscribe({
       next: (response) =>{
         this.chauffeurs = response
         if(contrat) {
@@ -230,10 +229,9 @@ export class ContratComponent implements OnInit {
     
   }
 
-
-  getMotos(contrat : any = null)
+  getMotosLibre(contrat : any = null)
   {
-    this.contratService.getMotos().subscribe({
+    this.motoService.getMotosLibre().subscribe({
       next : (response) =>{
         this.motos = response
         if(contrat) {
@@ -250,10 +248,9 @@ export class ContratComponent implements OnInit {
     })
   }
   
-
   openModal(contrat : any = null) {
-    this.getChauffeur(contrat)
-    this.getMotos(contrat)
+    this.getChauffeurLibre(contrat)
+    this.getMotosLibre(contrat)
     this.showModal = true;
   }
 
@@ -281,5 +278,4 @@ export class ContratComponent implements OnInit {
     }
   }
 
- 
 }

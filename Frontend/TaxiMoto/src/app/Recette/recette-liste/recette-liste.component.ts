@@ -48,7 +48,7 @@ export class RecetteListeComponent implements OnInit {
     this.getContratsEnCours();
     this.loadRecettes();
   }
-
+  //  Les contrat en cours
   getContratsEnCours(): void {
     this.contratService.getContratsEnCours().subscribe({
       next : (response) =>{
@@ -60,6 +60,7 @@ export class RecetteListeComponent implements OnInit {
       } 
     })
   }
+  
   openModalAction(recette: any): void {
     this.actionRecette = recette;
     this.modalActionOpen = true;

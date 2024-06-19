@@ -4,6 +4,25 @@
       <div class="flex justify-between">
         <h1 class="bg-teal-400 hover:bg-teal-500 py-2 px-4 rounded text-white font-bold">Liste des motos</h1>
        
+
+<!--***************** Recherche *******************-->
+<form (submit)="onSearch($event)" class="flex flex-col md:flex-row gap-3">
+  <div class="flex">
+    <input type="text" [(ngModel)]="searchQuery" (keyup)="onSearchChange()"
+    placeholder="Rechercher une moto" [ngModelOptions]="{ standalone: true }"
+    class="w-full md:w-80 px-3 h-10 rounded-l border-2 border-sky-500 focus:outline-none focus:border-sky-500">
+  </div>
+  <select id="filterType" name="filterType" [(ngModel)]="selectedFilter"
+    (change)="onSearchChange()"
+    class="w-full h-10 border-2 border-sky-500 focus:outline-none focus:border-sky-500 text-sky-500 rounded px-2 md:px-3 py-0 md:py-1 tracking-wider">
+    <option selected value="numero_serie">Série</option>
+    <option value="couleur">Couleur</option>
+    <option value="enContrat">En contrat</option>
+  </select>
+</form>
+<!--***************** Recherche *******************-->
+
+
         <button (click)="openModal()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Add
         </button>

@@ -4,7 +4,8 @@ from Utilisateur.permission import IsAdmin, IsManager
 from .models import Moto
 from .serializer import MotoSerializer
 from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 5
     page_size_query_param = 'page_size'
@@ -22,6 +23,10 @@ class MotoGenericAPIView(
     serializer_class = MotoSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = StandardResultsSetPagination
+    filter_backends = [SearchFilter, DjangoFilterBackend, OrderingFilter]
+    search_fields = ['id', 'numero_serie', 'couleur']  # Champs sur lesquels effectuer une recherche
+    filterset_fields = ['enContrat']  # Champs sur lesquels effectuer un filtrage
+    ordering_fields = ['id', 'numero_serie', 'couleur']  # Champs sur lesquels effectuer un tri
 
     def get_permissions(self):
         if self.request.method in permissions.SAFE_METHODS:
@@ -56,6 +61,24 @@ class MotoGenericAPIView(
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+    
+    def get_queryset(self):
+        queryset = self.queryset
+        filter_param = self.request.query_params.get('filter', None)
+        # Filtrage par paramètre de recherche
+        search_query = self.request.query_params.get('search', None)
+        if search_query:
+                queryset = queryset.filter(numero_serie__icontains=search_query) | \
+                        queryset.filter(couleur__icontains=search_query)
+
+        # Filtrage par paramètre de filtre
+        if filter_param and filter_param != 'All':
+            if filter_param == 'enContrat':
+                queryset = queryset.filter(enContrat=True)
+            # Ajoutez d'autres filtres si nécessaire
+
+        return queryset
+    
 class MotoNonContratAPIView(generics.ListAPIView):
         serializer_class = MotoSerializer
         permission_classes = [IsAuthenticated]

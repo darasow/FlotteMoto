@@ -8,7 +8,7 @@ import { AuthService } from '../auth/auth.service';
   providedIn: 'root'
 })
 export class PanneService {
-  private apiUrl = 'http://127.0.0.1:8000/panne/'
+  private localHost = 'http://127.0.0.1:8000'
 
   constructor(private http: HttpClient, private authService: AuthService) {}
   private getHeaders(): HttpHeaders {
@@ -23,33 +23,45 @@ export class PanneService {
     let params = new HttpParams()
     .set('page', page.toString())
     .set('page_size', itemsPerPage.toString());
-    return this.http.get<Panne[]>(`${this.apiUrl}`, {headers, params});
+    return this.http.get<Panne[]>(`${this.localHost}/panne/`, {headers, params});
   }
+  searchPannes(query: string, filter: string, page: number = 1, itemsPerPage: number = 5): Observable<any> {
+    let params = `page=${page}&size=${itemsPerPage}`;
+    const headers = this.getHeaders()
+    if (query) {
+      params += `&search=${query}`;
+    }
+    if (filter && filter !== 'All') {
+      params += `&filter=${filter}`;
+    }
+    return this.http.get<any>(`${this.localHost}/panne/?${params}`, {headers},);
+  }
+  
   getPannesChauffeur(chauffeur_id : number, page : number = 1, itemsPerPage : number = 5): Observable<any> {
     const headers = this.getHeaders()
     let params = new HttpParams()
     .set('page', page.toString())
     .set('page_size', itemsPerPage.toString());
-    return this.http.get<Panne[]>(`${this.apiUrl}chauffeur/${chauffeur_id}/`, {headers, params});
+    return this.http.get<Panne[]>(`${this.localHost}/panne/chauffeur/${chauffeur_id}/`, {headers, params});
   }
 
   getPanne(id: number): Observable<Panne> {
     const headers = this.getHeaders()
-    return this.http.get<Panne>(`${this.apiUrl}${id}`, {headers});
+    return this.http.get<Panne>(`${this.localHost}/panne/${id}`, {headers});
   }
 
   createPanne(panne: Panne): Observable<Panne> {
     const headers = this.getHeaders()
-    return this.http.post<Panne>(this.apiUrl, panne, {headers});
+    return this.http.post<Panne>(`${this.localHost}/panne/`, panne, {headers});
   }
 
   updatePanne(id: number, panne: Panne): Observable<Panne> {
     const headers = this.getHeaders()
-    return this.http.put<Panne>(`${this.apiUrl}${id}`, panne, {headers});
+    return this.http.put<Panne>(`${this.localHost}/panne/${id}`, panne, {headers});
   }
 
   deletePanne(id: number): Observable<void> {
     const headers = this.getHeaders()
-    return this.http.delete<void>(`${this.apiUrl}${id}`, {headers});
+    return this.http.delete<void>(`${this.localHost}/panne/${id}`, {headers});
   }
 }

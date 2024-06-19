@@ -7,6 +7,8 @@ from .serializer import PanneSerializer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 5
@@ -25,6 +27,11 @@ class PanneGenericAPIView(
     queryset = Panne.objects.all()
     serializer_class = PanneSerializer
     pagination_class = StandardResultsSetPagination
+    filter_backends = [SearchFilter, DjangoFilterBackend, OrderingFilter]
+    search_fields = ['numero_serie', ]  # Champs sur lesquels effectuer une recherche
+    filterset_fields = ['etat']  # Champs sur lesquels effectuer un filtrage
+    ordering_fields = ['numero_serie']  # Champs sur lesquels effectuer un tri
+
     
     def get_permissions(self):
         if self.request.method in permissions.SAFE_METHODS:
@@ -53,7 +60,22 @@ class PanneGenericAPIView(
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
-    
+   
+    def get_queryset(self):
+        queryset = self.queryset
+        filter_param = self.request.query_params.get('filter', None)
+        search_query = self.request.query_params.get('search', None)
+        
+        if filter_param and filter_param != 'All':
+            if filter_param == 'corigee':
+                # Filtrage par état corrigé
+                queryset = queryset.filter(etat='corrigee')
+            if filter_param == 'non_corigee':
+                queryset = queryset.filter(etat='non_corrigee')
+
+            # Ajoutez d'autres filtres si nécessaire
+        return queryset
+
 class PannesParChauffeurEnContratAPIView(generics.ListAPIView):
         serializer_class = PanneSerializer
         pagination_class = StandardResultsSetPagination

@@ -8,9 +8,7 @@ import { Utilisateur } from '../interface/Utilisateur';
   providedIn: 'root'
 })
 export class ContratService {
-  private apiUrl = 'http://127.0.0.1:8000/contrat/'; // L'URL de votre API Contrats
-  private apiUrlchauffeur = 'http://127.0.0.1:8000/chauffeur/'; // L'URL de votre API Contrats
-
+  private localHost = 'http://127.0.0.1:8000'
   constructor(private http: HttpClient, private authService : AuthService) { }
 
   getAllContrats(page : number = 1, itemsPerPage : number = 5): Observable<any> {
@@ -19,53 +17,34 @@ export class ContratService {
     .set('page', page.toString())
     .set('page_size', itemsPerPage.toString());
 
-    return this.http.get<any[]>(`${this.apiUrl}`, { headers, params});
+    return this.http.get<any[]>(`${this.localHost}/contrat/`, { headers, params});
   }
 
   getContrat(id: number): Observable<any> {
     const headers = this.getHeaders();
-    return this.http.get<any>(`${this.apiUrl}${id}`, { headers });
+    return this.http.get<any>(`${this.localHost}/contrat/${id}`, { headers });
   }
-getchauffeur(id : number)
-{
-  const headers = this.getHeaders();
-  return this.http.get<any>(`${this.apiUrlchauffeur}${id}`, {headers})
-}
-getChauffeurByUsername(username : String)
-{
-  const headers = this.getHeaders();
-  return this.http.get<any>(`${this.apiUrlchauffeur}username/${username}`, {headers})
-}
-
 
   addContrat(contrat: any): Observable<any> {
     const headers = this.getHeaders();
-    return this.http.post<any>(this.apiUrl, contrat, { headers });
+    return this.http.post<any>(`${this.localHost}/contrat/`, contrat, { headers });
   }
 
   updateContrat(id: number, contrat: any): Observable<any> {
     const headers = this.getHeaders();
-    return this.http.put<any>(`${this.apiUrl}${id}`, contrat, { headers });
+    return this.http.put<any>(`${this.localHost}/contrat/${id}`, contrat, { headers });
   }
 
   deleteContrat(id: number): Observable<void> {
     const headers = this.getHeaders();
-    return this.http.delete<void>(`${this.apiUrl}${id}`, { headers });
+    return this.http.delete<void>(`${this.localHost}/contrat/${id}`, { headers });
   }
 
-  getMotos(): Observable<any[]> {
+  // Recuperer tout les contrat en cours
+  getContratsEnCours(): Observable<any[]> {
     const headers = this.getHeaders();
-    return this.http.get<any[]>('http://127.0.0.1:8000/moto/libre/', { headers });
+    return this.http.get<any[]>(`${this.localHost}/contrat/en_cours/`, { headers });
   }
-  getChauffeurs(): Observable<Utilisateur[]> {
-    const headers = this.getHeaders();
-    return this.http.get<Utilisateur[]>('http://127.0.0.1:8000/utilisateur/libre/', { headers });
-  }
-  getContratsEnCours(): Observable<Utilisateur[]> {
-    const headers = this.getHeaders();
-    return this.http.get<Utilisateur[]>('http://127.0.0.1:8000/contrat/en_cours/', { headers });
-  }
-
 
   private getHeaders(): HttpHeaders {
     const token = this.authService.getToken();    

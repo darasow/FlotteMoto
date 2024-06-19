@@ -8,7 +8,8 @@ import { AuthService } from '../auth/auth.service';
 })
 export class MotoService {
 
-  private userApi = 'http://127.0.0.1:8000/moto/'
+  private localHost = 'http://127.0.0.1:8000'
+
   constructor(private http: HttpClient, private authService: AuthService) { }
 
   private getHeaders(): HttpHeaders {
@@ -18,33 +19,47 @@ export class MotoService {
     });
   }
   
+  searchMotos(query: string, filter: string, page: number = 1, itemsPerPage: number = 5): Observable<any> {
+    let params = `page=${page}&size=${itemsPerPage}`;
+    const headers = this.getHeaders()
+    if (query) {
+      params += `&search=${query}`;
+    }
+    if (filter && filter !== 'All') {
+      params += `&filter=${filter}`;
+    }
+    return this.http.get<any>(`${this.localHost}/moto/?${params}`, {headers});
+  }
+
   getMotos(page : number = 1, itemsPerPage : number = 5): Observable<any> {
     const headers = this.getHeaders()
     let params = new HttpParams()
     .set('page', page.toString())
     .set('page_size', itemsPerPage.toString());
-
-    return this.http.get<any[]>(`${this.userApi}`, { headers, params});
+    return this.http.get<any[]>(`${this.localHost}/moto/`, { headers, params});
   }
 
   getMotosEncontratTypeEmbauche(): Observable<any[]> {
     const headers = this.getHeaders()
-    return this.http.get<any[]>(`${this.userApi}enContrat/embauche/`, { headers});
+    return this.http.get<any[]>(`${this.localHost}/moto/enContrat/embauche/`, { headers});
   }
 
   createMoto(motoData: any): Observable<any> {
     const headers = this.getHeaders()
-    return this.http.post<any>(`${this.userApi}`, motoData, { headers });
+    return this.http.post<any>(`${this.localHost}/moto/`, motoData, { headers });
   }
-
+  getMotosLibre(): Observable<any[]> {
+    const headers = this.getHeaders();
+    return this.http.get<any[]>(`${this.localHost}/moto/libre/`, { headers });
+  }
+  
   updateMoto(motoId: number, motoData: any): Observable<any> {
     const headers = this.getHeaders()
-
-    return this.http.put<any>(`${this.userApi}${motoId}`, motoData, { headers });
+    return this.http.put<any>(`${this.localHost}/moto/${motoId}`, motoData, { headers });
   }
 
   deleteMoto(motoId: number): Observable<any> {
     const headers = this.getHeaders()
-    return this.http.delete<any>(`${this.userApi}${motoId}`, { headers });
+    return this.http.delete<any>(`${this.localHost}/moto/${motoId}`, { headers });
   }
 }

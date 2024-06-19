@@ -103,6 +103,7 @@ export class UserListeComponent implements OnInit {
       confirmPassword?.setErrors(null);
     }
   }
+  
   onEdit(utilisateur: Utilisateur) {
     this.isEditMode = true; // Activer le mode édition
     this.utilisateur = utilisateur; // Stocker l'utilisateur à éditer
@@ -156,11 +157,7 @@ export class UserListeComponent implements OnInit {
   }
 
   onDelete(id: number) {
-    // if(this.user.type_utilisateur != 'admin')
-    // {
-    //   alert("Impossible vous n'avez pas les autorisations de supprimer")
-    //   return
-    // }
+ 
     if (confirm('Voullez vous continuez?')) {
       this.utilisateurService.deleteUtilisateur(id).subscribe({
         next: () => {

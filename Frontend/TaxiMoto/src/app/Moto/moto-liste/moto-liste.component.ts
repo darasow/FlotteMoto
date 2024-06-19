@@ -4,6 +4,7 @@ import { MotoService } from '../moto.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { Moto } from 'src/app/interface/Moto';
 import { extractErrorMessages } from 'src/app/Util/Util';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-moto',
@@ -23,7 +24,12 @@ export class MotoComponent implements OnInit {
   currentUser: any;
   user: any;
   errorMessages : string[] = []
+  searchQuery: string = '';
+  selectedFilter: string = 'All';
+  searchSubject: BehaviorSubject<any>;
+  
   constructor(private authService: AuthService,private motoService: MotoService, private fb: FormBuilder) {
+    this.searchSubject = new BehaviorSubject<any>({ query: this.searchQuery, filter: this.selectedFilter });
     this.motoForm = this.fb.group({
       numero_serie: ['', Validators.required],
       couleur: ['', Validators.required],
@@ -40,6 +46,31 @@ export class MotoComponent implements OnInit {
     }
 }
 
+searcheEvent()
+{
+  this.searchSubject.pipe(
+    debounceTime(300), // Attendre 300ms après chaque frappe
+    distinctUntilChanged(), // Éviter les recherches identiques consécutives
+    switchMap(params => this.motoService.searchMotos(params.query, params.filter, this.currentPage, this.itemsPerPage))
+  ).subscribe({
+    next: (response) => {
+      this.motos = response.results;        
+      this.totalPages = Math.ceil(response.count / this.itemsPerPage);
+      this.updatePagination();
+    },
+    error: (err) => console.log(err)
+  });
+}
+
+onSearchChange() {
+  this.searchSubject.next({ query: this.searchQuery, filter: this.selectedFilter });
+  this.searcheEvent();
+}
+
+onSearch(event: Event) {
+  event.preventDefault();
+  this.onSearchChange();
+}
 
   openModal(): void {
     this.showModal = true;

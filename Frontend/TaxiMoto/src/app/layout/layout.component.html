@@ -4,7 +4,7 @@
     <header>
         <!--Nav-->
         <nav aria-label="menu nav" class="bg-gray-500   pt-2 md:pt-1 pb-1 px-1 mt-0 h-auto fixed w-full z-20 top-0">
-            <div class="flex flex-wrap items-center ">
+            <div class="flex flex-col md:flex-row flex-wrap items-center ">
                 <div class=" h-full flex items-center  md:w-1/3 justify-center md:justify-start text-white">
                     <a routerLink="/home" aria-label="Home">
                         Acceuil
@@ -12,7 +12,7 @@
                     </a>
                 </div>
     
-                <div class="flex flex-1 md:w-1/3 justify-center md:justify-start text-white px-2">
+                <!-- <div class="flex flex-1 md:w-1/3 justify-center  md:justify-start text-white px-2">
                     <span class="relative w-full">
                         <input aria-label="search" type="search" id="search" placeholder="Search" class="w-full bg-gray-900 text-white transition border border-transparent focus:outline-none focus:border-gray-400 rounded py-3 px-2 pl-10 appearance-none leading-normal">
                         <div class="absolute search-icon" style="top: 1rem; left: .8rem;">
@@ -21,15 +21,14 @@
                             </svg>
                         </div>
                     </span>
-                </div>
+                </div> -->
     
-                <div class="flex w-full pt-2 content-center justify-between md:w-1/3 md:justify-end">
+                <div class="flex w-full pt-2 text-center content-center justify-between md:w-1/3 md:justify-end">
                     <ul class="list-reset flex justify-between flex-1 md:flex-none items-center">
                         <!-- <li class="flex-1 md:flex-none md:mr-3">
                             <a class="inline-block py-2 px-4 text-white no-underline" href="#">Active</a>
                         </li> -->
-                        <li class="flex-1 md:flex-none md:mr-3">
-                        </li>
+                       
                         <li class="flex-1 md:flex-none md:mr-3">
                             <div class="relative inline-block">
                                 <button onclick="toggleDD('myDropdown')" class="drop-button text-white py-2 px-2 capitalize"> <span class="pr-2"><i class="em em-robot_face"></i></span> {{user?.username}} <svg class="h-3 fill-current inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -69,10 +68,11 @@
                             </a>
                         </li>
                         <li class="mr-3 flex-1">
-                            <a routerLink="/panne" class="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:hover:border-teal-400">
-                                <i class="fas fa-chart-area pr-0 md:pr-3 text-blue-600"></i><span class="pb-1 md:pb-0 text-xs md:text-base text-white md:text-white block md:inline-block">Pannes</span>
+                            <a  routerLink="/panne" class="block py-1 md:py-3 pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:border-teal-400">
+                                <i class="fa fa-envelope pr-0 md:pr-3"></i><span class="pb-1 md:pb-0 text-xs md:text-base text-gray-400 md:text-gray-200 block md:inline-block">Pannes</span>
                             </a>
                         </li>
+                     
                         <li class="mr-3 flex-1">
                             <a routerLink="/entretien" class="block py-1 md:py-3 pl-0 md:pl-1 align-middle text-white no-underline hover:text-white border-b-2 border-gray-800 hover:border-teal-400">
                                 <i class="fa fa-wallet pr-0 md:pr-3"></i><span class="pb-1 md:pb-0 text-xs md:text-base text-gray-400 md:text-gray-200 block md:inline-block">Entretien</span>

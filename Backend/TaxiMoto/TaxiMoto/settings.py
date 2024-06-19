@@ -176,7 +176,7 @@ REST_FRAMEWORK = {
 # Configuration SIMPLE_JWT pour Django REST Framework
 SIMPLE_JWT = {
     # Durée de vie du jeton d'accès avant qu'il expire. Ici, il est valable 10 minutes.
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     
     # Durée de vie du jeton de rafraîchissement avant qu'il expire. Ici, il est valable 1 jour.
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
