@@ -83,7 +83,6 @@ class PannesParChauffeurEnContratAPIView(generics.ListAPIView):
 
         def get_queryset(self):
             chauffeur_id = self.kwargs.get('chauffeur_id')
-
             # Trouver un contrat en cours pour le chauffeur
             contrat_en_cours = Contrat.objects.filter(
                 chauffeur_id=chauffeur_id,

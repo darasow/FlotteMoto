@@ -39,6 +39,7 @@ export class MotoService {
     return this.http.get<any[]>(`${this.localHost}/moto/`, { headers, params});
   }
 
+  // La liste des motos en contrat d'embauche en cours
   getMotosEncontratTypeEmbauche(): Observable<any[]> {
     const headers = this.getHeaders()
     return this.http.get<any[]>(`${this.localHost}/moto/enContrat/embauche/`, { headers});

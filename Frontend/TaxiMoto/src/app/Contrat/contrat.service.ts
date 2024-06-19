@@ -40,7 +40,7 @@ export class ContratService {
     return this.http.delete<void>(`${this.localHost}/contrat/${id}`, { headers });
   }
 
-  // Recuperer tout les contrat en cours
+  //  Les contrat en cours(chaque contrat vien avec le contrat lui meme + le chauffeur + la moto)
   getContratsEnCours(): Observable<any[]> {
     const headers = this.getHeaders();
     return this.http.get<any[]>(`${this.localHost}/contrat/en_cours/`, { headers });

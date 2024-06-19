@@ -75,6 +75,8 @@ class MotoGenericAPIView(
         if filter_param and filter_param != 'All':
             if filter_param == 'enContrat':
                 queryset = queryset.filter(enContrat=True)
+            elif filter_param == 'libre':
+                queryset = queryset.filter(enContrat=False)
             # Ajoutez d'autres filtres si nécessaire
 
         return queryset

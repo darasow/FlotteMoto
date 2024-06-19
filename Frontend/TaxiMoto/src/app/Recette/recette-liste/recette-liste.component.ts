@@ -48,12 +48,11 @@ export class RecetteListeComponent implements OnInit {
     this.getContratsEnCours();
     this.loadRecettes();
   }
-  //  Les contrat en cours
+  //  Les contrat en cours(chaque contrat vien avec le contrat lui meme + le chauffeur + la moto)
   getContratsEnCours(): void {
     this.contratService.getContratsEnCours().subscribe({
       next : (response) =>{
         this.chauffeursEnContrat = response
-        
       },
       error : (err) =>{
         console.log(err);

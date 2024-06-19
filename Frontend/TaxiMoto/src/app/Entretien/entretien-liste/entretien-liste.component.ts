@@ -126,7 +126,7 @@ export class EntretienListeComponent implements OnInit {
     {
       this.entretienService.deleteEntretien(id).subscribe({
         next : () => {
-          this.loadEntretiens
+          this.loadEntretiens()
         },
         error: (error) => {
           if(error.status == 403)  alert(`Impossible vous n'avez pas les autorisations de supprimer \n Erreur : ${error.status } - ${error.statusText}`)

@@ -49,7 +49,7 @@ export class MotoComponent implements OnInit {
 searcheEvent()
 {
   this.searchSubject.pipe(
-    debounceTime(300), // Attendre 300ms après chaque frappe
+    // debounceTime(300), // Attendre 300ms après chaque frappe
     distinctUntilChanged(), // Éviter les recherches identiques consécutives
     switchMap(params => this.motoService.searchMotos(params.query, params.filter, this.currentPage, this.itemsPerPage))
   ).subscribe({

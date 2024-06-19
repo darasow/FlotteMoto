@@ -84,12 +84,12 @@ export class PanneListeComponent implements OnInit{
       }
     });
   }
-
+ 
+  // La liste des motos en contrat d'embauche en cours
   loadMotos() {
     this.motoService.getMotosEncontratTypeEmbauche().subscribe({
       next: (response) =>{
         this.motos = response
-
       },
       error: (err) =>{
         console.log(err);
