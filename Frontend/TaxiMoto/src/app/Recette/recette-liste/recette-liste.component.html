@@ -23,8 +23,8 @@
           <tr *ngFor="let recette of paginatedRecette" class=" hover:bg-gray-100">
             <td class="border-grey-light border p-3">{{ recette.id }}</td>
             <td class="border-grey-light border p-3">{{ recette.chauffeur.last_name }}-{{recette.chauffeur.first_name}}</td>
-            <td class="border-grey-light border p-3">{{ recette.chauffeur.contrat.moto.numero_serie }}</td>
-            <td class="border-grey-light border p-3">{{ recette.chauffeur.contrat.type_contrat }}</td>
+            <td class="border-grey-light border p-3">{{ recette.chauffeur.contrat ? recette.chauffeur.contrat.moto.numero_serie  : "Aucune moto liée"}}</td>
+            <td class="border-grey-light border p-3">{{ recette.chauffeur.contrat ? recette.chauffeur.contrat.type_contrat : "Contrat supprimer" }}</td>
             <td class="border-grey-light border p-3">{{ recette.date | date }}</td>
             <td class="border-grey-light border p-3">{{ recette.montant | number:'1.2-2' }}</td>
             <td class="">
@@ -69,7 +69,7 @@
             <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-headline">Détails de la Recette</h3>
             <div class="mt-2">
               <!-- Affichage des détails de la recette -->
-              <dl class="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-3">
+              <dl *ngIf="actionRecette.chauffeur.contrat" class="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-3">
                 <div class="sm:col-span-1">
                   <dt class="text-sm font-medium text-gray-500">Chauffeur</dt>
                   <dd class="mt-1 text-sm text-gray-900">{{ actionRecette?.chauffeur.last_name }} {{ actionRecette?.chauffeur.first_name }}</dd>
@@ -97,6 +97,37 @@
                 <div class="sm:col-span-1">
                   <dt class="text-sm font-medium text-gray-500">Type de Contrat</dt>
                   <dd class="mt-1 text-sm text-gray-900">{{ actionRecette?.chauffeur.contrat.type_contrat }}</dd>
+                </div>
+              </dl>
+
+              <dl *ngIf="!actionRecette.chauffeur.contrat" class="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-3">
+                <div class="sm:col-span-1">
+                  <dt class="text-sm font-medium text-gray-500">Chauffeur</dt>
+                  <dd class="mt-1 text-sm text-gray-900">{{ actionRecette?.chauffeur.last_name }} {{ actionRecette?.chauffeur.first_name }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                  <dt class="text-sm font-medium text-gray-500">Date de payement : </dt>
+                  <dd class="mt-1 text-sm text-gray-900">{{ actionRecette?.date | date }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                  <dt class="text-sm font-medium text-gray-500">Montant Payer : </dt>
+                  <dd class="mt-1 text-sm text-gray-900">{{ actionRecette?.montant | number:'1.2-2' }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                  <dt class="text-sm font-medium text-gray-500">Montant total restant</dt>
+                  <dd class="mt-1 text-sm text-gray-900">Le montant total restant concerne les contrats a crédit</dd>
+                </div>
+                <div class="sm:col-span-1">
+                  <dt class="text-sm font-medium text-gray-500">Montant total payer</dt>
+                  <dd class="mt-1 text-sm text-gray-900">{{ actionRecette?.chauffeur.total_recettes | number:'1.2-2' }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                  <dt class="text-sm font-medium text-gray-500">Moto</dt>
+                  <dd class="mt-1 text-sm text-gray-900">Aucune moto liée le contrat n'existe</dd>
+                </div>
+                <div class="sm:col-span-1">
+                  <dt class="text-sm font-medium text-gray-500">Type de Contrat</dt>
+                  <dd class="mt-1 text-sm text-gray-900">Contrat inexistant</dd>
                 </div>
               </dl>
               <h1>Action</h1>

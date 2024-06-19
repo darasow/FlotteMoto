@@ -90,8 +90,8 @@ export class RecetteListeComponent implements OnInit {
   
   updatePagination() {
     this.paginatedRecette = this.recettes
+    
     }
-  
   
     nextPage(): void {
       if (this.currentPage < this.totalPages) {
@@ -107,7 +107,6 @@ export class RecetteListeComponent implements OnInit {
       }
     }
   
-
   openModal(recette?: any): void {
     
     if (recette) {
