@@ -30,4 +30,38 @@ function toggleDD(myDropMenu) {
   }
   
 
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    const profileButton = document.getElementById('profileButton');
+    const profileDropdown = document.getElementById('profileDropdown');
+    const menuButton = document.getElementById('menuButton');
+    const sidebar = document.getElementById('sidebar');
+    
+    // Debugging information
+    console.log(profileButton, profileDropdown);
 
+    // Ensure all elements are found before adding event listeners
+    if (profileButton && profileDropdown) {
+        // Toggle profile dropdown visibility
+        profileButton.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent the click event from propagating to document
+            profileDropdown.classList.toggle('hidden');
+            profileDropdown.classList.toggle('opacity-0');
+        });
+    }
+
+    // Close profile dropdown if clicking outside
+    document.addEventListener('click', (event) => {
+        if (!profileButton.contains(event.target) && !profileDropdown.contains(event.target)) {
+            profileDropdown.classList.add('hidden');
+            profileDropdown.classList.add('opacity-0');
+        }
+    });
+
+    // Toggle sidebar visibility
+    if (menuButton && sidebar) {
+        menuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('hidden');
+        });
+    }
+});

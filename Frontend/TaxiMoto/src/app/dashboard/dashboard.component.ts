@@ -17,7 +17,19 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.currentUser = this.authService.currentUserValue;
     this.user = this.currentUser
+
     
   }
+
+   // Fonciton gerant la responsivite du navbar
+  //  loadScript(src: string): void {
+  //   const script = document.createElement('script');
+  //   console.log(script);
+    
+  //   script.src = src;
+  //   script.async = true;
+  //   document.body.appendChild(script);
+//   }
+
 
 }

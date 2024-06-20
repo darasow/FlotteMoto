@@ -169,11 +169,14 @@
             formControlName="date_debut"
             class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
             [ngClass]="{'border-red-500': formControls['date_debut'].invalid && formControls['date_debut'].touched}">
+          <div class="text-red-600 mt-1" *ngIf="contratForm.hasError('dateRangeInvalid') && (formControls['date_debut'].dirty || formControls['date_fin'].dirty)">
+            La date de début doit être antérieure à la date de fin.
+          </div>
           <div class="text-red-600 mt-1" *ngIf="formControls['date_debut'].invalid && formControls['date_debut'].touched">
-            Date Début is required.
+            La date de début est requise.
           </div>
         </div>
-  
+        
         <div>
           <label for="date_fin" class="block text-sm font-medium text-gray-700">Date Fin</label>
           <input
@@ -182,7 +185,14 @@
             formControlName="date_fin"
             class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
             [ngClass]="{'border-red-500': formControls['date_fin'].invalid && formControls['date_fin'].touched}">
+          <div class="text-red-600 mt-1" *ngIf="contratForm.hasError('dateRangeInvalid') && (formControls['date_debut'].dirty || formControls['date_fin'].dirty)">
+            La date de fin doit être postérieure à la date de début.
+          </div>
+          <div class="text-red-600 mt-1" *ngIf="formControls['date_fin'].invalid && formControls['date_fin'].touched">
+            La date de fin est requise.
+          </div>
         </div>
+        
   
         <div>
           <label for="etat" class="block text-sm font-medium text-gray-700">État</label>

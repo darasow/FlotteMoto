@@ -1,3 +1,5 @@
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+
 export function extractErrorMessages(errorResponse: any): string[] {
     let errors: string[] = [];
   
@@ -23,4 +25,17 @@ export function extractErrorMessages(errorResponse: any): string[] {
     return errors;
   }
 
+
+  export function dateRangeValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const date_debut = control.get('date_debut')?.value;
+      const date_fin = control.get('date_fin')?.value;
+  
+      if (date_debut && date_fin && new Date(date_debut) >= new Date(date_fin)) {
+        return { dateRangeInvalid: true };
+      }
+      return null;
+    };
+  }
+  
  

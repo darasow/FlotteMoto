@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ContratService } from '../contrat.service';
 import { AuthService } from 'src/app/auth/auth.service';
-import { extractErrorMessages } from 'src/app/Util/Util';
+import { dateRangeValidator, extractErrorMessages } from 'src/app/Util/Util';
 import { UtilisateurService } from 'src/app/Utilisateur/utilisateur.service';
 import { MotoService } from 'src/app/Moto/moto.service';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
@@ -54,13 +54,21 @@ export class ContratComponent implements OnInit {
         ]
       ],
       date_debut: ['', Validators.required],
-      date_fin: [''],
+      date_fin: ['', Validators.required],
       etat: ['', Validators.required]
-    });
+    }, { validators: dateRangeValidator() });
 
     // Observer les changements du champ type_contrat
     this.contratForm.get('type_contrat')?.valueChanges.subscribe((value) => {
       this.onTypeContratChange(value);
+    });
+    // Observer les changements du champ date_debut
+    this.contratForm.get('date_debut')?.valueChanges.subscribe(() => {
+      this.contratForm.get('date_fin')?.updateValueAndValidity();
+    });
+    // Observer les changements du champ date_fin
+    this.contratForm.get('date_fin')?.valueChanges.subscribe(() => {
+      this.contratForm.get('date_debut')?.updateValueAndValidity();
     });
 
   }

@@ -21,6 +21,7 @@ logout(user : Utilisateur) {
   user: any | null = null;
   constructor(private authService: AuthService) {}
   ngOnInit(): void {
+    
     this.currentUser = this.authService.currentUserValue;
     this.user = this.currentUser.user
     
