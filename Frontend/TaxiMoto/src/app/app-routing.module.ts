@@ -9,7 +9,6 @@ import { AuthGuard } from './auth/auth.guard';
 import { LayoutComponent } from './layout/layout.component';
 import { LoginComponent } from './auth/login/login.component';
 import { ContratComponent } from './Contrat/contrat-liste/contrat-liste.component';
-import { RoleComponent } from './role/role.component';
 import { PanneListeComponent } from './Panne/panne-liste/panne-liste.component';
 import { EntretienListeComponent } from './Entretien/entretien-liste/entretien-liste.component';
 import { HomeComponent } from './Home/home/home.component';
@@ -20,10 +19,11 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent, pathMatch: 'full' },
   { path: '', redirectTo: '/login', pathMatch: 'full' }, // Redirection par défaut
   { path: 'logout', redirectTo: "/login", pathMatch : 'full' },
+
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'chauffeur', component: ChauffeurComponent, canActivate: [AuthGuard] },
-  { path: '', component: LayoutComponent, children: [
 
+  { path: '', component: LayoutComponent, children: [
     { path: 'dashboard', component: DashboardComponent },
     { path: 'utilisateurs', component: UserListeComponent },
     { path: 'moto', component: MotoComponent },
@@ -31,7 +31,6 @@ const routes: Routes = [
     { path: 'panne', component: PanneListeComponent },
     { path: 'contrat', component: ContratComponent },
     { path: 'entretien', component: EntretienListeComponent},
-    { path: 'roles', component: RoleComponent},  // Route pour lister les rôles
   ], canActivate: [AuthGuard] ,  data: { roles: ['admin', 'manager']}},
   { path: '**', redirectTo: '/login', pathMatch: 'full' }, // Pour gérer les routes inconnues
 ];

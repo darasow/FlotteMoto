@@ -27,12 +27,9 @@ class UtilisateurManager(BaseUserManager):
             raise ValueError('Le superutilisateur doit avoir is_superuser=True.')
         if extra_fields.get('type_utilisateur') != 'admin':
             raise ValueError('Le superutilisateur doit avoir type_utilisateur="admin".')
-
         user = self.create_user(username, email, password, **extra_fields)
-
         # Ajouter le superutilisateur au groupe "admin" et attribuer les permissions
         self.add_user_to_admin_group(user)
-
         return user
     
     def create_chauffeur(self, username, email=None, password=None, **extra_fields):

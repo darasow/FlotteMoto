@@ -14,7 +14,6 @@ import { InterceptorModule } from './Intercepteur/intercepteur.module';
 import { AuthInterceptor } from './Intercepteur/intercepteur';
 import { LayoutComponent } from './layout/layout.component';
 import { MotoComponent } from './Moto/moto-liste/moto-liste.component';
-import { RoleComponent } from './role/role.component';
 import { HomeComponent } from './Home/home/home.component';
 import { ChauffeurComponent } from './Chauffeur/chauffeur/chauffeur.component';
 
@@ -29,7 +28,6 @@ import { ChauffeurComponent } from './Chauffeur/chauffeur/chauffeur.component';
     ContratComponent,
     PanneListeComponent,
     LayoutComponent,
-    RoleComponent,
     HomeComponent,
     ChauffeurComponent,
   ],
