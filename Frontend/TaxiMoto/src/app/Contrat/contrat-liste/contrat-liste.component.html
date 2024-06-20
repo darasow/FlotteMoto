@@ -1,8 +1,25 @@
 <!-- Contrat Liste Component HTML -->
 <div class="flex items-center justify-center p-4">
   <div class="container overflow-auto">
-   <div class="flex justify-between">
+   <div class="flex space-x-6">
     <h1 class="bg-teal-400 hover:bg-teal-500 py-2 px-4 rounded text-white font-bold">Liste des contrats</h1>
+  
+<!--***************** Recherche *******************-->
+<form (submit)="onSearch($event)" class="flex flex-col md:flex-row gap-3">
+  
+  <select id="filterType" name="filterType" [(ngModel)]="selectedFilter"
+    (change)="onSearchChange()"
+    class="w-full h-10 border-2 border-sky-500 focus:outline-none focus:border-sky-500 text-sky-500 rounded px-2 md:px-3 py-0 md:py-1 tracking-wider">
+    <option selected value="all">Liste</option>
+    <option  value="en_cours">Contrat en cours</option>
+    <option value="annule">Contrat annulé</option>
+    <option value="embauche">Contrat d'embauche</option>
+    <option value="credit">Contrat a crédit</option>
+  </select>
+
+</form>
+<!--***************** Recherche *******************-->
+
     <button (click)="openModal()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
       Add
     </button>

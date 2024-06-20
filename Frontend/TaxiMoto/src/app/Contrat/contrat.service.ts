@@ -52,4 +52,17 @@ export class ContratService {
       'Authorization': `Bearer ${token}`
     });
   }
+
+  searchContrat(query: string, filter: string, page: number = 1, itemsPerPage: number = 5): Observable<any> {
+    let params = `page=${page}&size=${itemsPerPage}`;
+    const headers = this.getHeaders()
+    if (query) {
+      params += `&search=${query}`;
+    }
+    if (filter && filter !== 'All') {
+      params += `&filter=${filter}`;
+    }
+    return this.http.get<any>(`${this.localHost}/contrat/?${params}`, {headers},);
+  }
+
 }

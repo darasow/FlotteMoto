@@ -93,6 +93,24 @@ class ContratGenericAPIView(
 
     def perform_destroy(self, instance):
         instance.delete()
+    
+    def get_queryset(self):
+        queryset = self.queryset
+        filter_param = self.request.query_params.get('filter', None)
+        search_query = self.request.query_params.get('search', None)
+        
+        if filter_param:
+            if filter_param == 'embauche':
+                queryset = queryset.filter(type_contrat='embauche')
+            elif filter_param == 'credit':
+                queryset = queryset.filter(type_contrat='credit')
+            elif filter_param == 'en_cours':
+                queryset = queryset.filter(etat='en_cours')
+            elif filter_param == 'termine':
+                queryset = queryset.filter(etat='termine')
+            elif filter_param == 'annule':
+                queryset = queryset.filter(etat='annule')
+        return queryset
 class ContratsEnCoursAPIView(generics.ListAPIView):
     serializer_class = ContratSerializer
 

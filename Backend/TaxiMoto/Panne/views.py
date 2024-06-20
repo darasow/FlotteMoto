@@ -64,15 +64,15 @@ class PanneGenericAPIView(
     def get_queryset(self):
         queryset = self.queryset
         filter_param = self.request.query_params.get('filter', None)
-        search_query = self.request.query_params.get('search', None)
+        # search_query = self.request.query_params.ge/t('search', None)
         
-        if filter_param and filter_param != 'All':
+        if filter_param:
             if filter_param == 'corigee':
                 # Filtrage par état corrigé
                 queryset = queryset.filter(etat='corrigee')
-            if filter_param == 'non_corigee':
+            elif filter_param == 'non_corigee':
                 queryset = queryset.filter(etat='non_corrigee')
-
+            
             # Ajoutez d'autres filtres si nécessaire
         return queryset
 

@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { extractErrorMessages } from 'src/app/Util/Util';
 import { UtilisateurService } from 'src/app/Utilisateur/utilisateur.service';
 import { MotoService } from 'src/app/Moto/moto.service';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-contrat-liste',
@@ -30,7 +31,12 @@ export class ContratComponent implements OnInit {
   selectedChauffeurEncours : any
   isMontantInitialEnabled: boolean = false;
   errorMessages : string[] = []
+  searchQuery: string = '';
+  selectedFilter: string = 'All';
+  searchSubject: BehaviorSubject<any>;
+
   constructor(private authService : AuthService, private utilisateurService : UtilisateurService, private motoService : MotoService,  private contratService: ContratService, private fb: FormBuilder) {
+    this.searchSubject = new BehaviorSubject<any>({ query: this.searchQuery, filter: this.selectedFilter });
     this.contratForm = this.fb.group({
       chauffeur: ['', Validators.required],
       moto: ['', Validators.required],
@@ -69,6 +75,31 @@ export class ContratComponent implements OnInit {
         this.user = this.currentUser.user;
     }
   }
+
+  onSearchChange() {
+    this.searchSubject.next({ query: this.searchQuery, filter: this.selectedFilter });
+    this.searcheEvent()
+  }
+  searcheEvent()
+  {
+    this.searchSubject.pipe(
+      // debounceTime(300), // Attendre 300ms après chaque frappe
+      distinctUntilChanged(), // Éviter les recherches identiques consécutives
+      switchMap(params => this.contratService.searchContrat(params.query, params.filter, this.currentPage, this.itemsPerPage))
+    ).subscribe({
+      next: (response) => {
+        this.contrats = response.results;        
+        this.totalPages = Math.ceil(response.count / this.itemsPerPage);
+        this.updatePagination();
+      },
+      error: (err) => console.log(err)
+    });
+  }
+  onSearch(event: Event) {
+    event.preventDefault();
+    this.onSearchChange();
+  }
+
 
   listeContrat(page : number = 1) {
     this.contratService.getAllContrats().subscribe({
