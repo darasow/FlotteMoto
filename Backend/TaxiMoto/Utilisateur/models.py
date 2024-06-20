@@ -25,7 +25,7 @@ class Utilisateur(AbstractUser, PermissionsMixin):
     type_utilisateur = models.CharField(max_length=10, choices=TYPES_UTILISATEUR)
 
     # Champ pour le téléphone de l'utilisateur, optionnel
-    telephone = models.CharField(max_length=15, null=True, blank=True)
+    telephone = models.CharField(max_length=15, null=True, blank=True, unique=True)
 
     # Champ pour l'adresse de l'utilisateur, optionnel
     adresse = models.TextField(null=True, blank=True)
@@ -35,6 +35,9 @@ class Utilisateur(AbstractUser, PermissionsMixin):
 
     # Indique si l'utilisateur est sous contrat
     enContrat = models.BooleanField(default=False)
+
+    # Champ email, unique et obligatoire
+    email = models.EmailField(unique=True, null=False)
 
     # Redéfinition des relations avec les groupes et les permissions
     groups = models.ManyToManyField(
@@ -56,6 +59,7 @@ class Utilisateur(AbstractUser, PermissionsMixin):
     # Utilisation du gestionnaire personnalisé pour les utilisateurs
     objects = UtilisateurManager()
 
+    USERNAME_FIELD = 'username'
     # Surcharge de la méthode save pour ajouter de la logique spécifique
     def save(self, *args, **kwargs):
         """

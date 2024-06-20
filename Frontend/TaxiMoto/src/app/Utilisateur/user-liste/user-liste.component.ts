@@ -154,6 +154,7 @@ export class UserListeComponent implements OnInit {
     this.userForm.reset()
     this.errorMessages = []
     this.showModal = false;
+    this.isEditMode = false
   }
 
   onDelete(id: number) {

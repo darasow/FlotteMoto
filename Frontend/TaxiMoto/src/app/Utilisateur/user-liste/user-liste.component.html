@@ -176,6 +176,7 @@
             <option value="">Select Type</option>
             <option value="chauffeur">Chauffeur</option>
             <option value="manager">Manager</option>
+            <option *ngIf="user.type_utilisateur == 'admin'" value="admin">Admin</option>
           </select>
           <div *ngIf="formControls['type_utilisateur'].invalid && formControls['type_utilisateur'].touched" class="text-red-500 text-sm mt-1">
             User type is required.

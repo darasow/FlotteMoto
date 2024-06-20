@@ -26,6 +26,7 @@
           <tr>
             <th class="p-3 text-left">ID</th>
             <th class="p-3 text-left">Moto</th>
+            <th class="p-3 text-left">Créer par</th>
             <th class="p-3 text-left">Description</th>
             <th class="p-3 text-left">Date Signalement</th>
             <th class="p-3 text-left">État</th>
@@ -36,6 +37,7 @@
           <tr *ngFor="let panne of paginatedPannes" class="hover:bg-gray-100">
             <td class="border-grey-light border p-3">{{ panne.id }}</td>
             <td class="border-grey-light border p-3">{{ panne.moto.numero_serie }}</td>
+            <td class="border-grey-light border p-3">{{ panne.created_by }}</td>
             <td class="border-grey-light border p-3">{{ panne.description }}</td>
             <td class="border-grey-light border p-3">{{ panne.date_signalement | date }}</td>
             <td class="border-grey-light border p-3">{{ panne.etat }}</td>
