@@ -5,6 +5,7 @@ from django.contrib.auth.models import User, Permission
 from rest_framework.pagination import PageNumberPagination
 from  Contrat.models import Contrat
 from .permission import IsAdmin, IsManager
+from rest_framework.exceptions import ValidationError
 from .models import Utilisateur
 from .serializer import UserSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -68,7 +69,7 @@ class UtilisateurGenericAPIView(
         else:
             # For other cases, use the standard method which checks permissions
             if type_utilisateur in ['admin', 'manager'] and self.request.user.type_utilisateur != 'admin':
-                raise serializer.ValidationError("Les managers ne peuvent pas créer des utilisateurs de type admin ou manager.")
+                raise ValidationError("Les managers ne peuvent pas créer des utilisateurs de type admin ou manager.")
             serializer.save()
             
     def get(self, request, *args, **kwargs):

@@ -11,8 +11,13 @@ import { extractErrorMessages } from 'src/app/Util/Util';
   styleUrls: ['./recette-liste.component.css']
 })
 export class RecetteListeComponent implements OnInit {
-  // @Input() recette: any;
-  // @Output() formSubmit = new EventEmitter<any>();
+  @Input() recette: any;
+  @Output() formSubmit = new EventEmitter<any>();
+
+
+
+
+  
   recetteForm: FormGroup;
   chauffeursEnContrat: any[] = [];
   recettes: any[] = [];
